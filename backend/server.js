@@ -1,27 +1,27 @@
 const express = require("express");
 const userRouter = require("./api");
-const sqlite3 = require("sqlite3").verbose();
+//const sqlite3 = require("sqlite3").verbose();
 const passport = require("passport");
-const passportLocal = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
+//const passportLocal = require("passport-local").Strategy;
+//const bcrypt = require("bcryptjs");
 const session = require("express-session");
 //const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const db = require("./db.js");
+//const db = require("./db.js");
 //import User from "./sequelize";
 
 const server = express();
 const host = "localhost";
 const port = process.env.PORT || 3002;
-const env = process.env.NODE_ENV || "development";
+//const env = process.env.NODE_ENV || "development";
 
 //server in ascolto
 server.listen(port, () =>
   console.log(`server in esecuzione su ${host}:${port} ...`)
 );
 
-server.use(cors()); // user cors
+server.use(cors()); // allow cors origins requests
 server.use(express.json());
 
 //middleware
@@ -42,7 +42,7 @@ server.use(cookieParser("uniupo"));
 
 server.use(passport.initialize());
 server.use(passport.session());
-
+//require('./passportConfig')(passport);
 // //route
 
 // server.get("/", (req, res, next) => {

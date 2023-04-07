@@ -111,8 +111,15 @@
 <script>
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.css";
+import { useAuthStore } from "@/store/authUser";
 
 export default {
+  setup() {
+    const store = useAuthStore();
+    return {
+        store,
+    };
+  },
   data() {
     return {
       showModal: false,
@@ -128,25 +135,38 @@ export default {
     close() {
       this.$emit("close");
     },
-    // handleCloseModal() {
-    //   this.showModal = false;
-    // },
+    setUpLogin(name) {
+      // qui ci va il set up delle componenti legate alla login
+      this.store.authenticate();
+      this.store.setUsername(name);
+    },
     handleSubmit() {
       if (this.isLoginForm) {
         axios({
           method: "post",
-          //mode: "cors",
+          //mode: "same-origin",
           data: {
             email: this.email,
             password: this.password,
           },
           //withCredentials: true,
-          url: "http://localhost:3002/api/users/login",
-        });
+          url: "http://localhost:3002/api/users/login/login",
+        })
+          .then((res) => {
+            if (res.status == 200) {
+              const name = res.data.name;
+              this.setUpLogin(name);
+              // chiudo il form
+              this.close();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
         axios({
           method: "post",
-          //mode: "cors",
+          //mode: "same-origin",
           data: {
             email: this.email,
             password: this.password,
@@ -154,13 +174,16 @@ export default {
             name: this.name,
             surname: this.surname,
           },
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
           //withCredentials: true,
           url: "http://localhost:3002/api/users/register",
         })
           .then((res) => {
             if (res.ok) {
               alert("Registrazione avvenuta con successo.");
-              this.toggleForm();
+              //chiudo il form
+              this.close();
             }
           })
           .catch((err) => {

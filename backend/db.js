@@ -1,19 +1,21 @@
 var sqlite3 = require("sqlite3").verbose();
-const dbUser = "db.sqlite";
+const dbUser = "./db.sqlite";
 
 let db = new sqlite3.Database(dbUser, (err) => {
   if (err) {
     // Cannot open database
     console.error(err.message);
     throw err;
-  } else {
-    console.log("Connected to the User.");
+  }
+  else {
+    console.log("Connected to the User. Creating database...");
     db.run(
       `CREATE TABLE user (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name text, 
           surname text
           email text UNIQUE, 
+          salt text UNIQUE,
           password text,
           role text, 
           CONSTRAINT email_unique UNIQUE (email)
@@ -21,6 +23,13 @@ let db = new sqlite3.Database(dbUser, (err) => {
       (err) => {
         if (err) {
           // Table already created
+          console.error(err.message);
+          const query = `SELECT * FROM user WHERE email = 'pippo@gmail.com'`;
+          db.serialize(function () {
+            db.all(query, function (err, tables) {
+                console.log("selection successful");
+            });
+          });
         } else {
           // Table just created
           var insert =
@@ -41,7 +50,7 @@ let db = new sqlite3.Database(dbUser, (err) => {
     (err) => {
       if (err) {
         // Table already created
-      } else {
+        console.log(err.message);
       }
     });
   }
