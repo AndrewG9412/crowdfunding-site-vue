@@ -1,6 +1,7 @@
 <template>
   <header-sito></header-sito>
   <body-component class="top-space"></body-component>
+  <router-view></router-view>
 </template>
 
 <script>

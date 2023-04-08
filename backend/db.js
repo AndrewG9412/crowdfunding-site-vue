@@ -45,7 +45,8 @@ let db = new sqlite3.Database(dbUser, (err) => {
         categoria TEXT,
         creatore_id INTEGER REFERENCES user(id),
         descrizione TEXT,
-        immagine BLOB
+        immagine BLOB,
+        nome_creatore TEXT
     )`,
     (err) => {
       if (err) {

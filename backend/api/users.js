@@ -29,7 +29,7 @@ router.post(
             const cypted_pass = element.password;
             const hash = bcrypt.hashSync(clear_password, salt).toString();
             if(cypted_pass === hash) {
-              res.status(200).json({name: element.name, surname: element.surname});
+              res.status(200).json({id: element.id, name: element.name, surname: element.surname, role: element.role});
             }
             else {
               res.status(500).json("wrong password");

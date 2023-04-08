@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="fisso">
-      <div class="nomeSito">Sito di crowdfunding</div>
+      <router-link class="nomeSito" to="/">Sito di crowdfunding</router-link>
       <div class="barraRicerca">
         <input
           type="search"
@@ -12,7 +12,7 @@
       </div>
       <ol>
         <li v-if="store.isUserAuthenticated">
-          <router-link class="nav-buttons" to="/createproj"
+          <router-link class="nav-buttons" to="/create"
             >Nuovo progetto</router-link
           >
         </li>
@@ -64,7 +64,8 @@ export default {
   },
   methods: {
     logout() {
-      this.store.logout();
+      this.store.logout();          // clean delle store variables
+      this.$router.push("/");   // reindirizzo l'utente alla root dopo che si è sloggato (ho pulito tutte le variabili nello store) 
     },
     updateStatusModal(value) {
       this.showLoginModal = value;
@@ -95,6 +96,10 @@ export default {
 </script>
 
 <style scoped>
+
+a {
+  text-decoration: none;
+}
 
 li {
   display: flex;
@@ -129,6 +134,11 @@ nav {
   align-items: center;
   color: red;
   font-size: 20px;
+  cursor: pointer;
+}
+
+.nomeSito:hover {
+  text-decoration: underline;
 }
 
 nav .barraRicerca {

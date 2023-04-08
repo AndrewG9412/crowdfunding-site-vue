@@ -135,13 +135,19 @@ export default {
     close() {
       this.$emit("close");
     },
-    setUpLogin(name) {
+    setUpLoginUserData(id, name, role) {
       // qui ci va il set up delle componenti legate alla login
       this.store.authenticate();
       this.store.setUsername(name);
+      this.store.setTypeOfUser(role);
+      this.store.setUserId(id);
+    },
+    setUpLoginProjectsData(list) {
+      this.store.setProjectList(list);
     },
     handleSubmit() {
       if (this.isLoginForm) {
+        // chiamata che recupera i dati dell'utente
         axios({
           method: "post",
           //mode: "same-origin",
@@ -155,9 +161,25 @@ export default {
           .then((res) => {
             if (res.status == 200) {
               const name = res.data.name;
-              this.setUpLogin(name);
-              // chiudo il form
-              this.close();
+              const role = res.data.role;
+              const id = res.data.id;
+              this.setUpLoginUserData(id, name, role);
+              // chiamata che recupera i dati relativi ai progetti collegati all'utente
+              axios({
+                method: "get",
+                url: "http://localhost:3002/api/projects/" + id,
+              })
+                .then((res) => {
+                  if (res.status == 200) {
+                    console.log(res);
+                    this.setUpLoginProjectsData(res.data);
+                    // chiudo il form
+                    this.close();
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             }
           })
           .catch((err) => {

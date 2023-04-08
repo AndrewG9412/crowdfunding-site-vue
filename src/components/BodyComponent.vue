@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>{{ username}}</h1>
+        <h3 v-if="store.isUserAuthenticated">Benvenuto: {{ username}}!</h3>
+        <h3 v-else>Se vuoi visualizzare i tuoi progetti, effettua la login!</h3>
     </div>
 </template>
 

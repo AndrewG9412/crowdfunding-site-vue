@@ -22,7 +22,8 @@ server.listen(port, () =>
 );
 
 server.use(cors()); // allow cors origins requests
-server.use(express.json());
+server.use(express.json({limit: '50mb'}));
+server.use(express.urlencoded({limit: '50mb'}));
 
 //middleware
 server.use("/api", userRouter);
