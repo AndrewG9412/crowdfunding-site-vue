@@ -9,8 +9,12 @@ export const useAuthStore = defineStore({
         typeOfUser: null,
         id: null,
         projectList: [],
+        tempProjectId: null,
     }),
     actions: {
+        setTempProjectId(id) {
+            this.tempProjectId = id;
+        },
         setProjectList(list) {
             this.projectList = list;
         },

@@ -8,7 +8,7 @@ let db = new sqlite3.Database(dbUser, (err) => {
     throw err;
   }
   else {
-    console.log("Connected to the User. Creating database...");
+    console.log("Connected to the User. Set up database...");
     db.run(
       `CREATE TABLE user (
           id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -4,11 +4,15 @@ const db = require("../db.js");
 
 // Get
 router.route("/").get(async (req, res) => {
-  try {
-    res.status(200).json();
-  } catch (e) {
-    res.status(500).json(e);
-  }
+  db.serialize(function () {
+    db.all(`SELECT * FROM project`, function (err, tables) {
+        if(err) throw err;
+        else {
+          console.log(tables);
+          res.status(200).json(tables);
+        }
+    });
+  });
 });
 
 // GET condizionato dell'id dell'utente

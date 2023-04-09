@@ -8,12 +8,14 @@ import './assets/global.css';
 import { createRouter, createWebHistory } from "vue-router";
 import NewProjectComponent from "./components/projects/NewProjectComponent";
 import ProfileComponent from "./components/profile/ProfileComponent";
+import FormDocument from "./components/projects/FormDocument";
 import HomeComponent from "./components/HomeComponent";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/create", name: "Create", component: NewProjectComponent },
+    { path: "/document", name: "Document", component: FormDocument },
     { path: "/profile", component: ProfileComponent },
     { paths: "/home", component: HomeComponent },
   ]

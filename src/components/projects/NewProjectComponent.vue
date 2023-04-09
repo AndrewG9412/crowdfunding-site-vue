@@ -6,7 +6,7 @@
 
 <script>
 
-    import FormProject from '../FormProject.vue';
+    import FormProject from './FormProject.vue';
 
     export default {
         data() {
