@@ -42,6 +42,19 @@ router.route("/:id").delete(async (req, res) => {
   });
 });
 
+//GET progetti in base alla categoria
+router.route("/:category").get(async (req, res) => {
+  const category = req.params.category;
+  db.serialize(function () {
+    db.all(`GET FROM project WHERE categoria ='${category}'`, function (err, tables) {
+        if(err) throw err;
+        else {
+          res.status(200).json(tables);
+        }
+    });
+  });
+});
+
 router.route("/create/:create").post(async (req, res) => {
     const titolo = req.body.titolo;
     const categoria = req.body.categoria;

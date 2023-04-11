@@ -11,7 +11,7 @@
         <span class="fa fa-search ms-1" @click="iniziaRicerca"></span>
       </div>
       <ol>
-        <li v-if="store.isUserAuthenticated">
+        <li v-if="store.getTypeOfUser() == 'creatore'">
           <router-link class="nav-buttons" to="/create"
             >Nuovo progetto</router-link
           >
@@ -21,7 +21,7 @@
             >Profilo</router-link
           >
         </li>
-        <li v-if="store.isUserAuthenticated">
+        <li v-if="store.isUserAuthenticated" >
           <button class="btn btn-danger" @click="logout">
             Logout
           </button>
@@ -106,7 +106,7 @@ li {
 }
 
 nav {
-  background-color: white; /* bianco per ora, cambialo con il bg che vuoi */
+  background-color: white; 
   border-bottom: 1px solid black;
 }
 
@@ -180,6 +180,9 @@ nav ol {
 
 nav ol li {
   margin: 0 2px;
+}
+nav ol li button{
+  font-size: 20px;
 }
 
 nav ol li a {

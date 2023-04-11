@@ -135,10 +135,12 @@ export default {
     close() {
       this.$emit("close");
     },
-    setUpLoginUserData(id, name, role) {
+    setUpLoginUserData(id, name, role, surname, email ) {
       // qui ci va il set up delle componenti legate alla login
       this.store.authenticate();
       this.store.setUsername(name);
+      this.store.setCognome(surname);
+      this.store.setEmail(email);
       this.store.setTypeOfUser(role);
       this.store.setUserId(id);
     },
@@ -202,7 +204,7 @@ export default {
           url: "http://localhost:3002/api/users/register",
         })
           .then((res) => {
-            if (res.ok) {
+            if (res.status == 200) {
               alert("Registrazione avvenuta con successo.");
               //chiudo il form
               this.close();

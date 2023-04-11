@@ -7,6 +7,8 @@ export const useAuthStore = defineStore({
         isUserAuthenticated: false,
         username: null,
         typeOfUser: null,
+        surname: null,
+        email: null,
         id: null,
         projectList: [],
         tempProjectId: null,
@@ -41,9 +43,27 @@ export const useAuthStore = defineStore({
         getUsername() {
             return this.username;
         },
+        setCognome(surname){
+            this.surname = surname;
+        },
+        getCognome(){
+            return this.surname;
+        },
+        setEmail(email){
+            this.email = email;
+        },
+        getEmail(){
+            return this.email;
+        },
         logout() {
             this.isUserAuthenticated = false;
             this.username = null;
+            this.typeOfUser = null;
+            this.surname = null;
+            this.email = null;
+            this.id = null;
+            this.projectList = [];
+            this.tempProjectId = null;
         },
         setTypeOfUser(type) {
             this.typeOfUser = type;
@@ -57,6 +77,6 @@ export const useAuthStore = defineStore({
     },
     persist: {
         storage: sessionStorage,
-        paths: ['username', 'isUserAuthenticated', 'typeOfUser', 'id', 'projectList'],
+        paths: ['username', 'isUserAuthenticated', 'typeOfUser', 'id', 'projectList', 'surname', 'email',],
     },
 });

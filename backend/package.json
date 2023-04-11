@@ -21,7 +21,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "npx kill-port 3002 || nodemon server.js",
+    "dev": "nodemon server.js",
     "start": "node server.js",
     "build": "node server.js",
     "test": "node server.js",

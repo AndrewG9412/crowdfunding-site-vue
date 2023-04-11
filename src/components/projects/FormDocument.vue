@@ -126,6 +126,7 @@ export default {
     },
     mounted() {
         this.projectId = this.store.tempProjectId;
+        console.log(this.projectId);
     },
 };
 </script>

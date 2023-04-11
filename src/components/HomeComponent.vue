@@ -27,9 +27,9 @@
         </ol>
     </div>
     <div class="container" v-if="store.isUserAuthenticated">
-        <h3>Lista dei tuoi progetti attivi:</h3>
+        <h3>Lista dei tuoi progetti :</h3>
         <ol>
-            <li v-for="project in store.getProjectList()" :key="project"> titolo: {{  project.titolo  }} - immagine: <img :src="project.immagine" alt="img"><button class="btn btn-danger" @click="deleteProject(project.id)">elimina</button> <button class="btn btn-warning" @click="linkDoc(project.id)">Associa documento</button></li>
+            <li v-for="project in store.getProjectList()" :key="project"> titolo: {{  project.titolo  }} - immagine: <img :src="project.immagine" alt="img"><button class="btn btn-danger ms-1" @click="deleteProject(project.id)">elimina</button> <button class="btn btn-warning" @click="linkDoc(project.id)">Associa documento</button> <button class="btn btn-primary" @click="viewProj(project.id)">Visualizza</button></li>
         </ol>
     </div>
 </template>
@@ -51,6 +51,9 @@
             }
         },
         methods: {
+            // viewProj(projectId){
+            //     this.$router.push('/viewProj')
+            // },
             linkDoc(projectId) {
                 this.store.setTempProjectId(projectId);
                 this.$router.push('/document');
@@ -89,7 +92,7 @@
             },
             // openImage(link) {
             //     window.open(link);
-            // },
+            // }, 
         },
         mounted() {
             this.fetchProjects();

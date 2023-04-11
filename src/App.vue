@@ -1,6 +1,7 @@
 <template>
   <header-sito></header-sito>
-  <body-component class="top-space"></body-component>
+  <categorie-header class="top-space"/>
+  <body-component class="ms-2"></body-component>
   <router-view></router-view>
 </template>
 
@@ -8,11 +9,13 @@
 
 import HeaderSito from "./components/HeaderSito";
 import BodyComponent from "./components/BodyComponent";
+import CategorieHeader from "./components/CategorieHeader";
 
 export default {
   components: { 
     HeaderSito,
     BodyComponent,
+    CategorieHeader
   },
 };
 </script>
