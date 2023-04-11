@@ -1,14 +1,14 @@
 <template>
     <div class="ms-2">
-        <h1>Pagina profilo</h1>
+        <h1 class="page">Pagina profilo</h1>
 
-        <h2>Nome : {{nome}}</h2>
+        <h4>Nome : {{nome}}</h4>
 
-        <h2>Cognome : {{cognome}}</h2>
+        <h4>Cognome : {{cognome}}</h4>
 
-        <h2>Email : {{email}}</h2>
+        <h4>Email : {{email}}</h4>
 
-        <h2>Tipo di utente : {{type}}</h2>
+        <h4>Tipo di utente : {{type}}</h4>
     </div>
 </template>
 
@@ -31,7 +31,7 @@ export default {
         return this.store.getUsername();
     },
     cognome() { 
-        return this.store.getCognome();    
+        return this.store.getCognome();  
     },
     email() {
         return this.store.getEmail();
@@ -42,3 +42,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.page{
+    color: red;
+}
+</style>

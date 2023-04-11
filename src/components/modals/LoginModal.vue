@@ -141,6 +141,7 @@ export default {
       this.store.setUsername(name);
       this.store.setCognome(surname);
       this.store.setEmail(email);
+      console.log(this.store.getEmail);
       this.store.setTypeOfUser(role);
       this.store.setUserId(id);
     },

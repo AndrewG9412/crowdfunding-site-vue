@@ -3,10 +3,10 @@
     <nav>
       <ul>
         <li>
-          <router-link :to="{name : 'ViewProjectPerCategory', params : {category: 'arte'}}"> Arte </router-link>
+          <router-link :to="{name : 'ViewProjectPerCategory', query : {category: 'arte'}}"> Arte </router-link>
         </li>
         <li>
-          <router-link :to="{name : 'ViewProjectPerCategory', params : {category: 'letteratura'}}"> Letteratura </router-link>
+          <router-link :to="{name : 'ViewProjectPerCategory', query : {category: 'letteratura'}}"> Letteratura </router-link>
         </li>
         <li>
           <router-link :to="{name : 'ViewProjectPerCategory', params : {category:'informatica'}}"> Informatica </router-link>

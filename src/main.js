@@ -21,7 +21,7 @@ const router = createRouter({
     { path: "/viewProj", name: "ViewProject", component: ViewProjectComponent },
     { path: "/profile",name : "Profile", component: ProfileComponent },
     { paths: "/home", component: HomeComponent },
-    { path: "/viewProjCategory", name: "ViewProjectPerCategory", component: ViewListProjectPerCategory}
+    { paths: "/viewProjCategory/:category", name: "ViewProjectPerCategory", component: ViewListProjectPerCategory, props: true}
   ]
 });
 

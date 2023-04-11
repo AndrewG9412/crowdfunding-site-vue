@@ -29,21 +29,27 @@
 
 <script>
 import axios from "axios";
+import {useRoute} from "vue-router";
 
 export default {
+  setup(){
+    const route = useRoute();
+    this.category = route.query.category
+  },  
+//   computed: {
+//     category : this.$route.params.category
+//   },
   data() {
     return {
       allProjectsPerCategory: [],
-      category: this.$route.params.category,
-    
     };
   },
   methods: {
-    fetchProjects(category) {
-        console.log(`categoria cliccata ${category}`);
+    fetchProjects() {
+      console.log(`categoria cliccata ${this.category}`);
       axios({
         method: "get",
-        url: "http://localhost:3002/api/projects/" + category,
+        url: "http://localhost:3002/api/projects/" + this.category,
       })
         .then((res) => {
           if (res.status == 200) {

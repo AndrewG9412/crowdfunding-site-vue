@@ -29,7 +29,7 @@
     <div class="container" v-if="store.isUserAuthenticated">
         <h3>Lista dei tuoi progetti :</h3>
         <ol>
-            <li v-for="project in store.getProjectList()" :key="project"> titolo: {{  project.titolo  }} - immagine: <img :src="project.immagine" alt="img"><button class="btn btn-danger ms-1" @click="deleteProject(project.id)">elimina</button> <button class="btn btn-warning" @click="linkDoc(project.id)">Associa documento</button> <button class="btn btn-primary" @click="viewProj(project.id)">Visualizza</button></li>
+            <li v-for="project in store.getProjectList()" :key="project"> titolo: {{  project.titolo  }} - immagine: <img :src="project.immagine" alt="img"><button class="btn btn-danger ms-1" @click="deleteProject(project.id)">elimina</button> <button class="btn btn-warning" @click="linkDoc(project.id)">Associa documento</button> </li>
         </ol>
     </div>
 </template>
