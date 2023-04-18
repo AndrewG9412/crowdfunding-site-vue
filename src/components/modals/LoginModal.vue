@@ -141,7 +141,6 @@ export default {
       this.store.setUsername(name);
       this.store.setCognome(surname);
       this.store.setEmail(email);
-      console.log(this.store.getEmail);
       this.store.setTypeOfUser(role);
       this.store.setUserId(id);
     },
@@ -164,9 +163,11 @@ export default {
           .then((res) => {
             if (res.status == 200) {
               const name = res.data.name;
+              const surname = res.data.surname;
               const role = res.data.role;
+              const email = res.data.email;
               const id = res.data.id;
-              this.setUpLoginUserData(id, name, role);
+              this.setUpLoginUserData(id, name, surname,role, email);
               // chiamata che recupera i dati relativi ai progetti collegati all'utente
               axios({
                 method: "get",
