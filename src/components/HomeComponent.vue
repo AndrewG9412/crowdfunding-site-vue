@@ -81,9 +81,6 @@ export default {
           console.log(err);
         });
     },
-    // openImage(link) {
-    //     window.open(link);
-    // },
   },
   mounted() {
     this.fetchProjects();

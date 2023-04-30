@@ -16,7 +16,7 @@
     <ol>
       <li
         class="m-2 p-2"
-        v-for="project in store.getProjectList()"
+        v-for="project in this.allProjects"
         :key="project"
       >
         <span class="titolo p-2">{{ project.titolo }} </span>
@@ -52,10 +52,25 @@ export default {
   },
   data() {
     return {
-      projectList : [],
+      allProjects: [],
     };
   },
   methods: {
+    fetchProjects() {
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/projects/id/" +  this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res);
+            this.allProjects = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     editProject(projectId) {
       this.$router.push({
         name: "EditProject",
@@ -103,6 +118,9 @@ export default {
     type() {
       return this.store.getTypeOfUser();
     },
+  },
+  mounted() {
+    this.fetchProjects();
   },
 };
 </script>

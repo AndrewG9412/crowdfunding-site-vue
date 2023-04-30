@@ -12,7 +12,6 @@
               class="form-control"
               type="text"
               id="titolo"
-              placeholder="gioco di carte"
               v-model="titolo"
               required
             />
@@ -90,7 +89,7 @@
 <script>
 import axios from "axios";
 import { useAuthStore } from "@/store/authUser";
-import _ from "lodash";
+//import _ from "lodash";
 
 export default {
   setup() {
@@ -101,7 +100,6 @@ export default {
   },
   computed: {
     projectId() {
-      console.log(this.$route.params.id);
       return this.$route.params.id;
     },
   },
@@ -135,7 +133,6 @@ export default {
           nome_creatore: this.nome_creatore,
           descrizione: this.descrizione,
           file_immagine: this.previewImage,
-          //projectId: this.projectId,
         },
         url: "http://localhost:3002/api/projects/edit/" + this.projectId,
       })
@@ -152,15 +149,31 @@ export default {
         });
     },
     getOldData() {
-      const project = _.filter(this.store.getProjectList(), (project) => {
-        const parsed = JSON.parse(JSON.stringify(project));
-        return parsed.id == this.projectId;
-      });
-      this.titolo = project[0].titolo;
-      this.categoria = project[0].categoria;
-      this.nome_creatore = project[0].nome_creatore;
-      this.descrizione = project[0].descrizione;
-      this.previewImage = project[0].immagine;
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/projects/project/" + this.projectId,
+      })
+      .then((res) => {
+          if (res.status == 200) {
+            this.titolo = res.data.titolo;
+            this.categoria = res.data.categoria;
+            this.nome_creatore = res.data.nome_creatore;
+            this.descrizione = res.data.descrizione;
+            this.previewImage = res.data.immagine;
+          }
+        })
+      .catch((err) => {
+          console.log(err);
+        });
+      // const project = _.filter(this.store.getProjectList(), (project) => {
+      //   const parsed = JSON.parse(JSON.stringify(project));
+      //   return parsed.id == this.projectId;
+      // });
+      // this.titolo = project[0].titolo;
+      // this.categoria = project[0].categoria;
+      // this.nome_creatore = project[0].nome_creatore;
+      // this.descrizione = project[0].descrizione;
+      // this.previewImage = project[0].immagine;
     },
   },
   mounted() {

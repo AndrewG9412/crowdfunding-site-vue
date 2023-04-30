@@ -152,12 +152,10 @@ export default {
         // chiamata che recupera i dati dell'utente
         axios({
           method: "post",
-          //mode: "same-origin",
           data: {
             email: this.email,
             password: this.password,
           },
-          //withCredentials: true,
           url: "http://localhost:3002/api/users/login/login",
         })
           .then((res) => {
