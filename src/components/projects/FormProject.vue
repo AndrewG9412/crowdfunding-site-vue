@@ -106,9 +106,6 @@ export default {
     };
   },
   methods: {
-    setImage() {
-      this.file_immagine = this.$refs.immagine.files[0];
-    },
     uploadImage(e){
       const image = e.target.files[0];
       const reader = new FileReader();
@@ -123,7 +120,6 @@ export default {
       formData.append("immagine", this.previewImage);
       axios({
           method: "post",
-          //mode: "cors",
           data: {
             titolo: this.titolo,
             categoria: this.categoria,
@@ -132,12 +128,12 @@ export default {
             descrizione: this.descrizione,
             file_immagine: this.previewImage
           },
-          //withCredentials: true,
-          url: "http://localhost:3002/api/projects/create/create",
+          url: "http://localhost:3002/api/projects/create",
         })
         .then((res) => {
             if (res.status == 200) {
-              console.log(res);
+              alert("Progetto creato correttamente");
+              this.$router.push("/home");
             }
           })
           .catch((err) => {
@@ -156,7 +152,6 @@ export default {
     border: 2px solid red;
     border-radius: 5px;
   }
-
   .image-box {
     padding: 1.5rem;
   }

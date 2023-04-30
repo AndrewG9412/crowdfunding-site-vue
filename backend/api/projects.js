@@ -8,15 +8,14 @@ router.route("/").get(async (req, res) => {
     db.all(`SELECT * FROM project`, function (err, tables) {
         if(err) throw err;
         else {
-          console.log(tables);
           res.status(200).json(tables);
         }
     });
   });
 });
 
-// GET condizionato dell'id dell'utente
-router.route("/:id*").get(async (req, res) => {
+//GET condizionato dell'id dell'utente
+router.route("/id/:id*").get(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
     db.all(`SELECT * FROM project WHERE creatore_id = '${id}'`, function (err, tables) {
@@ -31,7 +30,6 @@ router.route("/:id*").get(async (req, res) => {
 // DELETE condizionato dell'id del progetto
 router.route("/:id").delete(async (req, res) => {
   const id = req.params.id;
-  console.log('hello?', id);
   db.serialize(function () {
     db.all(`DELETE FROM project WHERE id='${id}'`, function (err, tables) {
         if(err) throw err;
@@ -45,17 +43,20 @@ router.route("/:id").delete(async (req, res) => {
 //GET progetti in base alla categoria
 router.route("/:category").get(async (req, res) => {
   const category = req.params.category;
+  console.log(category);
   db.serialize(function () {
-    db.all(`GET FROM project WHERE categoria ='${category}'`, function (err, tables) {
+    db.all(`SELECT * FROM project WHERE categoria = '${category}'`, function (err, tables) {
         if(err) throw err;
         else {
+          console.log(tables);
           res.status(200).json(tables);
         }
     });
   });
 });
 
-router.route("/create/:create").post(async (req, res) => {
+//POST creazione progetto
+router.route("/create").post(async (req, res) => {
     const titolo = req.body.titolo;
     const categoria = req.body.categoria;
     const nome_creatore = req.body.nome_creatore;
@@ -84,12 +85,33 @@ router.route("/create/:create").post(async (req, res) => {
     });
 });
 
-router.route("/edit/:edit").put(async (req, res) => {
-  try {
-    res.status(200).json();
-  } catch (e) {
-    res.status(500).json(e);
-  }
+
+//PATCH modifica progetto
+router.route("/edit/:projectId").patch(async (req, res) => {
+    const projectId = req.params.projectId;
+    const titolo = req.body.titolo;
+    const categoria = req.body.categoria;
+    const nome_creatore = req.body.nome_creatore;
+    const descrizione = req.body.descrizione;
+    const immagine = req.body.file_immagine
+    var sql = `UPDATE project SET titolo = ?, categoria = ?, descrizione = ?, immagine = ?, nome_creatore = ? WHERE id = "${projectId}"`;
+    //var sql = `UPDATE project SET titolo = ${titolo}, categoria = ${categoria}, descrizione = ${descrizione}, immagine = ${immagine} , nome_creatore = ${nome_creatore} WHERE id = '${projectId}' `;
+    var params = [
+      titolo,
+      categoria,
+      descrizione,
+      immagine,
+      nome_creatore,
+    ];
+    db.run(sql,params , function (err, result) {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.status(200).json({
+        message: "success"
+      })
+    });  
 });
 
 module.exports = router;

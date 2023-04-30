@@ -12,6 +12,8 @@ import FormDocument from "./components/projects/FormDocument";
 import HomeComponent from "./components/HomeComponent";
 import ViewProjectComponent from "./components/projects/ViewProjectComponent";
 import ViewListProjectPerCategory from "./components/projects/ViewListProjectsPerCategory";
+import ViewLinkedDocuments from "./components/projects/ViewLinkedDocuments";
+import EditProject from "./components/projects/EditProject";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,7 +23,9 @@ const router = createRouter({
     { path: "/viewProj", name: "ViewProject", component: ViewProjectComponent },
     { path: "/profile",name : "Profile", component: ProfileComponent },
     { paths: "/home", component: HomeComponent },
-    { paths: "/viewProjCategory/:category", name: "ViewProjectPerCategory", component: ViewListProjectPerCategory, props: true}
+    { path: "/viewProjCategory/:category", name: "ViewProjectPerCategory", component: ViewListProjectPerCategory},
+    { path: "/seeDocs/:projectId", name: "SeeLinkedDocuments", component: ViewLinkedDocuments},
+    { path: "/editProject/:id", name: "EditProject", component: EditProject, props : true}
   ]
 });
 

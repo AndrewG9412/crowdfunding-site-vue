@@ -6,9 +6,8 @@
         <input
           type="search"
           v-model="stringaRicerca"
-          @keyup.enter="iniziaRicerca"
         />
-        <span class="fa fa-search ms-1" @click="iniziaRicerca"></span>
+        <span class="fa fa-search ms-1 tastoRicerca" @click="iniziaRicerca"></span>
       </div>
       <ol>
         <li v-if="store.getTypeOfUser() == 'creatore'">
@@ -43,7 +42,6 @@
 
 <script>
 import LoginModal from "./modals/LoginModal.vue";
-import "bootstrap/dist/css/bootstrap.css";
 import bootstrap from "bootstrap/dist/js/bootstrap.min.js";
 import { useAuthStore } from "@/store/authUser";
 
@@ -108,6 +106,10 @@ li {
 nav {
   background-color: white; 
   border-bottom: 1px solid black;
+}
+
+.tastoRicerca {
+  cursor: pointer;
 }
 
 .nav-buttons {

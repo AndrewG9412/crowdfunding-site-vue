@@ -15,6 +15,20 @@ router.route("/").get(async (req, res) => {
   });
 });
 
+//GET condizionato da projectId
+router.route("/:project_id").get(async (req, res) => {
+  const projectId = req.params.project_id;
+  db.serialize(function () {
+    db.all(`SELECT * FROM document where project_id = "${projectId}" ORDER BY data`, function (err, tables) {
+      if (err) throw err;
+      else {
+        console.log(tables);
+        res.status(200).json(tables);
+      }
+    });
+  });
+})
+
 // POST creazione del documento
 
 router.route("/:create").post(async (req, res) => {

@@ -117,6 +117,8 @@ export default {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res);
+                        alert("Documento creato correttamente");
+                        this.$router.push("/profile");
                     }
                 })
                 .catch((err) => {

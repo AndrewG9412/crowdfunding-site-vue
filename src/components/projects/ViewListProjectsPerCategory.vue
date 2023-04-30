@@ -1,7 +1,6 @@
 <template>
   <div class="container">
-    <ol>
-      <li v-for="project in allProjectsPerCategory" :key="project">
+    <h5>Progetti relativi a {{category}}</h5>
         <table class="table">
           <thead>
             <tr>
@@ -13,32 +12,29 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="project in allProjectsPerCategory" :key="project">
               <th scope="row">{{ project.nome_creatore }}</th>
               <td>{{ project.titolo }}</td>
               <td>{{ project.categoria }}</td>
               <td>{{ project.descrizione }}</td>
-              <td><img :src="project.immagine" alt="img" /></td>
+              <td><img :src="project.immagine"  alt="img"/></td>
+              <td><button class="btn btn-primary" @click="seeLinkedDocs(project.id)">Vedi documenti</button></td>
             </tr>
           </tbody>
         </table>
-      </li>
-    </ol>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import {useRoute} from "vue-router";
 
 export default {
-  setup(){
-    const route = useRoute();
-    this.category = route.query.category
-  },  
-//   computed: {
-//     category : this.$route.params.category
-//   },
+  
+  computed: {
+    category() {
+      return this.$route.params.category;
+    },
+  },
   data() {
     return {
       allProjectsPerCategory: [],
@@ -53,7 +49,7 @@ export default {
       })
         .then((res) => {
           if (res.status == 200) {
-            console.log(res);
+            console.log(res.data);
             this.allProjectsPerCategory = res.data;
           }
         })
@@ -61,9 +57,30 @@ export default {
           console.log(err);
         });
     },
+    seeLinkedDocs(projectId){
+      this.$router.push({
+        name: "SeeLinkedDocuments",
+        params: { projectId: projectId },
+      });
+    }
   },
   mounted() {
-    this.fetchProjects(this.category);
+    this.fetchProjects();
   },
+  watch:{
+    category(){
+      this.fetchProjects();
+    }
+  }
 };
 </script>
+
+
+<style scoped>
+
+img{
+  width: 20%;
+  height: 15%;
+}
+
+</style>

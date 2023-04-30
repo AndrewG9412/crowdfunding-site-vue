@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db.js");
 const bcrypt = require("bcryptjs");
-const passport = require("passport");
+const passport = require("../passportConfig.js");
 //const User = require("../sequelize");
 
 // Get
@@ -16,7 +16,8 @@ router.route("/").get(async (req, res) => {
 
 //login
 router.post(
-  "/login/:login",
+  "/login/:login", 
+  //passport.authenticate('local'),
   async (req, res, next) => {
     const email = req.body.email;
     const clear_password = req.body.password;
@@ -26,9 +27,9 @@ router.post(
           else {
             const element = tables[0];
             const salt = element.salt;
-            const cypted_pass = element.password;
+            const crypted_pass = element.password;
             const hash = bcrypt.hashSync(clear_password, salt).toString();
-            if(cypted_pass === hash) {
+            if(crypted_pass === hash) {
               res.status(200).json({id: element.id, name: element.name, surname: element.surname, role: element.role, email: element.email});
             }
             else {
@@ -63,35 +64,6 @@ router.route("/:register").post(async (req, res, next) => {
     email: req.body.email,
     passwordCript: hash,
   };
-  // User.findOne(
-  //   {
-  //     where: {
-  //       email: data.email,
-  //     },
-  //   },
-  //   (err, doc) => {
-  //     if (err) throw err;
-  //     if (doc) res.send("Utente gia' esistente");
-  //     else {
-  //       // User.create({
-  //       //   name: data.name,
-  //       //   surname: data.surname,
-  //       //   email: data.email,
-  //       //   password: data.passwordCript,
-  //       //   role: data.role,
-  //       //   salt: salt,
-  //       // })
-  //       // .then(()=>{
-  //       //   console.log("User creato");
-  //       //   res.json('user creato');
-  //       // })
-        
-  //   }
-
-  // ).catch(err => {
-  //   console.log(err);
-  //   res.status(500).json(err);
-  // })
   var sql = "INSERT INTO user (name, surname, email, password, role, salt) VALUES (?,?,?,?,?,?)";
   var params = [
     data.name,

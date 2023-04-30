@@ -72,7 +72,7 @@ export const useAuthStore = defineStore({
             return this.typeOfUser;
         },
         getAuth() {
-          return this.isUserAuthenticated;  
+            return this.isUserAuthenticated;  
         },
     },
     persist: {

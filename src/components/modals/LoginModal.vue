@@ -167,11 +167,11 @@ export default {
               const role = res.data.role;
               const email = res.data.email;
               const id = res.data.id;
-              this.setUpLoginUserData(id, name, surname,role, email);
+              this.setUpLoginUserData(id, name, role,surname, email);
               // chiamata che recupera i dati relativi ai progetti collegati all'utente
               axios({
                 method: "get",
-                url: "http://localhost:3002/api/projects/" + id,
+                url: "http://localhost:3002/api/projects/id/" + id,
               })
                 .then((res) => {
                   if (res.status == 200) {
