@@ -14,7 +14,7 @@ router.route("/").get(async (req, res) => {
   });
 });
 
-// Get condizionato dell' id del progett
+// Get condizionato dell' id del progetto
 router.route("/project/:id").get(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {

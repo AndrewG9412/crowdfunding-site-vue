@@ -31,7 +31,7 @@
         <button class="btn btn-primary m-1" @click="linkDoc(project.id)">
           Associa documento
         </button>
-        <button class="btn btn-primary m-1" @click="viewDocs(project.id)">
+        <button class="btn btn-primary m-1" @click="viewDocs(project.id, project.creatore_id)">
           Visualizza documenti
         </button>
       </li>
@@ -77,7 +77,8 @@ export default {
         params: { id: projectId },
       });
     },
-    viewDocs(projectId) {
+    viewDocs(projectId, creatoreId) {
+      this.store.setTempCreatoreId(creatoreId);
       this.$router.push({
         name: "SeeLinkedDocuments",
         params: { projectId: projectId },

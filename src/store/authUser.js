@@ -12,6 +12,7 @@ export const useAuthStore = defineStore({
         id: null,
         projectList: [],
         tempProjectId: null,
+        tempCreatoreId: null
     }),
     actions: {
         editProjectData(data, id) {
@@ -20,6 +21,12 @@ export const useAuthStore = defineStore({
             this.projectList[id].nome_creatore = data.nome_creatore;
             this.projectList[id].descrizione = data.descrizione;
             this.projectList[id].file_immagine = data.file_immagine;
+        },
+        setTempCreatoreId(creatoreId){
+            this.tempCreatoreId = creatoreId;
+        },
+        getTempCreatoreId(){
+            return this.tempCreatoreId;
         },
         setTempProjectId(id) {
             this.tempProjectId = id;

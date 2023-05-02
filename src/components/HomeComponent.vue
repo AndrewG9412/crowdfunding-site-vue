@@ -19,6 +19,14 @@
           <td>{{ project.categoria }}</td>
           <td>{{ project.descrizione }}</td>
           <td><img :src="project.immagine" alt="img" /></td>
+          <td>
+            <button
+              class="btn btn-primary m-1"
+              @click="viewDocs(project.id, project.creatore_id)"
+            >
+              Visualizza documenti
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -42,9 +50,13 @@ export default {
     };
   },
   methods: {
-    // viewProj(projectId){
-    //     this.$router.push('/viewProj')
-    // },
+    viewDocs(projectId, creatoreId) {
+      this.store.setTempCreatoreId(creatoreId);
+      this.$router.push({
+        name: "SeeLinkedDocuments",
+        params: { projectId: projectId },
+      });
+    },
     linkDoc(projectId) {
       this.store.setTempProjectId(projectId);
       this.$router.push("/document");
