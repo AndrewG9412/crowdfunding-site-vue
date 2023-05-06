@@ -2,7 +2,7 @@
   <!-- Modal -->
   <div
     class="modal fade"
-    id="modal-login"
+    id="payment-modal"
     tabindex="-1"
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"
@@ -45,25 +45,31 @@
                 />
               </div>
               <div class="form-group">
-                <label for="tipo_carta" class="control-label">Tipo carta:</label>
+                <label for="tipo_carta" class="control-label"
+                  >Tipo carta:</label
+                >
                 <select
-                    class="form-control"
-                    id="tipo_carta"
-                    v-model="tipo_carta"
-                    required
-                  >
-                    <option value="visa">VISA</option>
-                    <option value="mastercard">MASTERCARD</option>
-                    <option value="american_express">AMERICAN EXPRESS</option>
-                  </select>
+                  class="form-control"
+                  id="tipo_carta"
+                  v-model="tipo_carta"
+                  required
+                >
+                  <option value="visa">VISA</option>
+                  <option value="mastercard">MASTERCARD</option>
+                  <option value="american_express">AMERICAN EXPRESS</option>
+                </select>
               </div>
               <div class="form-group">
-                <label for="numero_carta" class="control-label">Numero di carta:</label>
-                <br>
+                <label for="numero_carta" class="control-label"
+                  >Numero di carta:</label
+                >
+                <br />
                 <input
                   class="form-control"
                   type="number"
                   id="numero_carta"
+                  maxLength="16"
+                  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                   v-model="numero_carta"
                   required
                 />
@@ -72,12 +78,18 @@
                 <label for="ccv" class="control-label">CCV:</label>
                 <input
                   class="form-control"
-                  maxlength="3"
+                  maxLength="3"
+                  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                   type="number"
                   id="ccv"
                   v-model="ccv"
                   required
                 />
+              </div>
+              <div class="col text-center">
+                <button class="btn btn-danger btn-block mt-2" type="submit">
+                  Conferma acquisto
+                </button>
               </div>
             </div>
           </div>
@@ -88,23 +100,43 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        nome: '',
-        cognome: '',
-        tipo_carta: '',
-        numero_carta: '',
-        ccv:''
-      }
+import axios from "axios";
+
+export default {
+  props: ["utente", "documento"],
+  data() {
+    return {
+      nome: "",
+      cognome: "",
+      tipo_carta: "",
+      numero_carta: "",
+      ccv: "",
+    };
+  },
+  methods: {
+    close() {
+      this.$emit("close");
     },
-    methods: {
-      handleSubmit() {
-        console.log(this.nome)
-      },
-      close() {
-        //$('#modal-login').modal('hide')
-      }
-    }
-  }
+    handleSubmit() {
+      axios({
+        method: "post",
+        data: {
+          userId: this.utente,
+          docId: this.documento,
+        },
+        url: "http://localhost:3002/api/documents/document/buydoc",
+      }).then((res) => {
+        if (res.status == 200) {
+          this.close()
+          this.$router.push({
+            name: "ViewDocument",
+            params: { id: this.documento},
+          });
+        }
+      }).catch((err) =>{
+        console.log(err);
+      });
+    },
+  },
+};
 </script>

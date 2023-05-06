@@ -1,13 +1,19 @@
 <template>
-  <div>
+  <div class="header">
     <nav class="fisso">
       <router-link class="nomeSito" to="/">Sito di crowdfunding</router-link>
       <div class="barraRicerca">
-        <input
-          type="search"
-          v-model="stringaRicerca"
-        />
-        <span class="fa fa-search ms-1 tastoRicerca" @click="iniziaRicerca"></span>
+        <input type="search" v-model="stringaRicerca" />
+        <span
+          class="fa fa-search ms-1 tastoRicerca"
+          @click="iniziaRicerca(this.stringaRicerca)"
+        ></span>
+        <button
+          class="btn btn-primary"
+          @click="goToAdvancedSearch()"
+        >
+          Ricerca avanzata
+        </button>
       </div>
       <ol>
         <li v-if="store.getTypeOfUser() == 'creatore'">
@@ -16,21 +22,13 @@
           >
         </li>
         <li v-if="store.isUserAuthenticated">
-          <router-link class="nav-buttons" to="/profile"
-            >Profilo</router-link
-          >
+          <router-link class="nav-buttons" to="/profile">Profilo</router-link>
         </li>
-        <li v-if="store.isUserAuthenticated" >
-          <button class="btn btn-danger" @click="logout">
-            Logout
-          </button>
+        <li v-if="store.isUserAuthenticated">
+          <button class="btn btn-danger" @click="logout">Logout</button>
         </li>
         <li v-if="!store.isUserAuthenticated">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showModal"
-          >
+          <button type="button" class="btn btn-danger" @click="showModal">
             Login
           </button>
         </li>
@@ -46,15 +44,16 @@ import bootstrap from "bootstrap/dist/js/bootstrap.min.js";
 import { useAuthStore } from "@/store/authUser";
 
 export default {
-  components: { LoginModal },
+  components: { LoginModal},
   setup() {
     const store = useAuthStore();
     return {
-        store,
+      store,
     };
   },
   data() {
     return {
+      showAdvancedSearch: false,
       showLoginModal: false,
       stringaRicerca: "",
       modale: null,
@@ -62,32 +61,36 @@ export default {
   },
   methods: {
     logout() {
-      this.store.logout();          // clean delle store variables
-      this.$router.push("/");   // reindirizzo l'utente alla root dopo che si è sloggato (ho pulito tutte le variabili nello store) 
+      this.store.logout(); // clean delle store variables
+      this.$router.push("/"); // reindirizzo l'utente alla root dopo che si è sloggato (ho pulito tutte le variabili nello store)
     },
     updateStatusModal(value) {
       this.showLoginModal = value;
     },
     iniziaRicerca() {
       if (this.stringaRicerca !== "") {
-        console.log(this.stringaRicerca);
+        this.$router.push({
+          name: "ResultResearch",
+          params: { keyword: this.stringaRicerca },
+        });
       }
     },
     showModal() {
-        const modal = document.getElementById(
-            "modal-login"
-        );
-        document.body.appendChild(modal);
-        var myModal = new bootstrap.Modal(modal, {
-            keyboard: false,
-        });
+      const modal = document.getElementById("modal-login");
+      document.body.appendChild(modal);
+      var myModal = new bootstrap.Modal(modal, {
+        keyboard: false,
+      });
 
-        myModal.show();
+      myModal.show();
 
-        this.modale = myModal;
+      this.modale = myModal;
     },
     hideModal() {
       this.modale.hide();
+    },
+    goToAdvancedSearch(){
+      this.$router.push({name: "AdvancedSearch"});
     }
   },
 };
@@ -104,7 +107,7 @@ li {
 }
 
 nav {
-  background-color: white; 
+  background-color: white;
   border-bottom: 1px solid black;
 }
 
@@ -183,7 +186,7 @@ nav ol {
 nav ol li {
   margin: 0 2px;
 }
-nav ol li button{
+nav ol li button {
   font-size: 20px;
 }
 
@@ -199,4 +202,6 @@ nav ol li a {
 nav ol li:hover a {
   color: red;
 }
+
+
 </style>

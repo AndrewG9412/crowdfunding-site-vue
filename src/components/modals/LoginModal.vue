@@ -117,7 +117,7 @@ export default {
   setup() {
     const store = useAuthStore();
     return {
-        store,
+      store,
     };
   },
   data() {
@@ -135,7 +135,7 @@ export default {
     close() {
       this.$emit("close");
     },
-    setUpLoginUserData(id, name, role, surname, email ) {
+    setUpLoginUserData(id, name, role, surname, email) {
       // qui ci va il set up delle componenti legate alla login
       this.store.authenticate();
       this.store.setUsername(name);
@@ -165,7 +165,7 @@ export default {
               const role = res.data.role;
               const email = res.data.email;
               const id = res.data.id;
-              this.setUpLoginUserData(id, name, role,surname, email);
+              this.setUpLoginUserData(id, name, role, surname, email);
               // chiamata che recupera i dati relativi ai progetti collegati all'utente
               axios({
                 method: "get",
@@ -190,7 +190,6 @@ export default {
       } else {
         axios({
           method: "post",
-          //mode: "same-origin",
           data: {
             email: this.email,
             password: this.password,
@@ -200,7 +199,6 @@ export default {
           },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          //withCredentials: true,
           url: "http://localhost:3002/api/users/register",
         })
           .then((res) => {

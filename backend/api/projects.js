@@ -14,7 +14,7 @@ router.route("/").get(async (req, res) => {
   });
 });
 
-// Get condizionato dell' id del progetto
+// GET condizionato dell' id del progetto
 router.route("/project/:id").get(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
@@ -27,7 +27,18 @@ router.route("/project/:id").get(async (req, res) => {
   });
 });
 
-
+//GET in base a chiave ricercata
+router.route("/project/search/:keyword").get(async (req,res) => {
+  const keyword = req.params.keyword;
+  db.serialize(function (){
+    db.all(`SELECT * FROM project WHERE titolo LIKE "${keyword}" OR descrizione LIKE "${keyword}"`, function (err, tables){
+      if (err) throw err;
+      else {
+        res.status(200).json(tables);
+      }
+    });
+  });
+});
 
 //GET condizionato dell'id dell'utente
 router.route("/id/:id*").get(async (req, res) => {

@@ -28,30 +28,40 @@
         </td>
         <td>
           <button
-            v-if="checkTypeAndNotBuyed(document, store.getUserId())"
+            v-if="useAuthStore.isUserAuthenticated() && checkTypeAndNotBuyed(document, this.store.getUserId())"
             class="btn btn-primary"
-            @click="buyDoc(document.id)"
+            @click="showModal"
           >
             Acquista
           </button>
         </td>
         <td>
-          <button class="btn btn-primary" @click="viewDocument(document.id)">
+          <button
+            v-if="document.tipo == 'gratuito' || this.getIfBuyed(document.id ,this.store.getUserId())"
+            class="btn btn-primary"
+            @click="viewDocument(document.id)"
+          >
             Visualizza documento
           </button>
         </td>
+        <payment-modal @close="hideModal" :utente="this.store.getUserId()" :documento="document.id"></payment-modal>
       </tr>
     </tbody>
   </table>
+  
 </template>
 
 <script>
 import axios from "axios";
 import { useAuthStore } from "@/store/authUser";
+import PaymentModal from "../modals/PaymentModal.vue";
+import bootstrap from "bootstrap/dist/js/bootstrap.min.js";
 
 export default {
+  components: { PaymentModal },
   data() {
     return {
+      buyed: null,
       allLinkedDocuments: [],
     };
   },
@@ -74,6 +84,9 @@ export default {
     },
   },
   methods: {
+    hideModal() {
+      this.modale.hide();
+    },
     fetchLinkedDocuments() {
       axios({
         method: "get",
@@ -112,25 +125,40 @@ export default {
       //se doc a pagamento e non acquistato da userId restituire true
       //se doc gratis restituire false
       //se già acquistato restituire false
-      if (doc.tipo == "pagamento" && !this.getIfBuyed(doc.id, userId)) return true;
+      const buyed = this.getIfBuyed(doc.id, userId);
+      if (doc.tipo == "pagamento" && !buyed) return true;
       if (doc.tipo == "gratuito") return false;
-      if (doc.acquistato_da.contains(userId)) return false;
+      if (buyed) return false;
     },
     getIfBuyed(docId, userId) {
       axios({
         method: "get",
         url:
-          "http://localhost:3002/api/documents/document/" + docId + "/userId/" + userId,
+          "http://localhost:3002/api/documents/document/" +
+          docId +
+          "/userId/" +
+          userId,
       })
         .then((res) => {
           if (res.status == 200) {
-            if (res.data.risultato == true) return true;
-            else return false;
+            if (res.data.risultato == true) return (this.buyed = true);
+            else return (this.buyed = false);
           }
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    showModal() {
+      const modal = document.getElementById("payment-modal");
+      document.body.appendChild(modal);
+      var myModal = new bootstrap.Modal(modal, {
+        keyboard: false,
+      });
+
+      myModal.show();
+
+      this.modale = myModal;
     },
   },
 };

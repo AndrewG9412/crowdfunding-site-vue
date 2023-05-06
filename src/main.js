@@ -16,6 +16,8 @@ import ViewLinkedDocuments from "./components/projects/ViewLinkedDocuments";
 import EditProject from "./components/projects/EditProject";
 import EditDocument from "./components/projects/EditDocument";
 import ViewDocument from "./components/projects/ViewDocument";
+import ResultResearch from "./components/ResultResearch";
+import AdvancedSearch from "./components/AdvancedSearch";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,6 +54,17 @@ const router = createRouter({
       name: "ViewDocument",
       component: ViewDocument,
     },
+    {
+      path: "/resultResearch/:keyword",
+      name: "ResultResearch",
+      component: ResultResearch,
+    },
+    {
+      path: "/advancedSearch",
+      name: "AdvancedSearch",
+      component: AdvancedSearch
+    }
+
   ],
 });
 
