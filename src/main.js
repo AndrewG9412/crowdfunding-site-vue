@@ -10,7 +10,7 @@ import NewProjectComponent from "./components/projects/NewProjectComponent";
 import ProfileComponent from "./components/profile/ProfileComponent";
 import FormDocument from "./components/projects/FormDocument";
 import HomeComponent from "./components/HomeComponent";
-import ViewProjectComponent from "./components/projects/ViewProjectComponent";
+import ViewProject from "./components/projects/ViewProject";
 import ViewListProjectPerCategory from "./components/projects/ViewListProjectsPerCategory";
 import ViewLinkedDocuments from "./components/projects/ViewLinkedDocuments";
 import EditProject from "./components/projects/EditProject";
@@ -24,7 +24,7 @@ const router = createRouter({
   routes: [
     { path: "/create", name: "Create", component: NewProjectComponent },
     { path: "/document", name: "Document", component: FormDocument },
-    { path: "/viewProj", name: "ViewProject", component: ViewProjectComponent },
+    { path: "/viewProj/:id", name: "ViewProject", component: ViewProject },
     { path: "/profile", name: "Profile", component: ProfileComponent },
     { paths: "/home", component: HomeComponent },
     {

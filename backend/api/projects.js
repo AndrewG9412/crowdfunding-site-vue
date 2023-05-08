@@ -40,6 +40,21 @@ router.route("/project/search/:keyword").get(async (req,res) => {
   });
 });
 
+//GET per ricerca avanzata
+router.route("/advsearch/:keyword/category/:cat").get(async (req,res) => {
+  const keyword = req.params.keyword;
+  const category = req.params.cat;
+  db.serialize(function (){
+    db.all(`SELECT * FROM project WHERE categoria = "${category}" AND (titolo LIKE "${keyword}" OR descrizione LIKE "${keyword}")`, function (err, tables){
+      if (err) throw err;
+      else {
+        res.status(200).json(tables);
+      }
+    });
+  });
+});
+
+
 //GET condizionato dell'id dell'utente
 router.route("/id/:id*").get(async (req, res) => {
   const id = req.params.id;

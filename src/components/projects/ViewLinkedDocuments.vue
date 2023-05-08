@@ -28,7 +28,7 @@
         </td>
         <td>
           <button
-            v-if="useAuthStore.isUserAuthenticated() && checkTypeAndNotBuyed(document, this.store.getUserId())"
+            v-if="store.isUserAuthenticated && checkTypeAndNotBuyed(document, this.store.getUserId())"
             class="btn btn-primary"
             @click="showModal"
           >

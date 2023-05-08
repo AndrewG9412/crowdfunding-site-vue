@@ -61,6 +61,20 @@ router.route("/document/search/:keyword").get(async (req,res) => {
   });
 });
 
+//GET ricerca avanzata
+router.route("/advsearch/:keyword/category/:cat").get(async (req,res) => {
+  const keyword = req.params.keyword;
+  const category = req.params.cat;
+  db.serialize(function (){
+    db.all(`SELECT * FROM document INNER JOIN project ON document.project_id=project.id WHERE project.categoria = "${category}" AND (document.titolo LIKE "${keyword}" OR document.descrizione LIKE "${keyword}")`, function (err, tables){
+      if (err) throw err;
+      else {
+        res.status(200).json(tables);
+      }
+    });
+  });
+});
+
 //GET di documento acquistato da userId
 router.route("/document/:id/userId/:user").get(async (req, res) => {
   const documentId = req.params.id;

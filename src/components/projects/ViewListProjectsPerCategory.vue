@@ -18,7 +18,7 @@
               <td>{{ project.categoria }}</td>
               <td>{{ project.descrizione }}</td>
               <td><img :src="project.immagine"  alt="img"/></td>
-              <td><button class="btn btn-primary" @click="seeLinkedDocs(project.id)">Vedi documenti</button></td>
+              <td><button class="btn btn-primary" @click="viewProj(project.id)">Vedi progetto</button></td>
             </tr>
           </tbody>
         </table>
@@ -57,11 +57,11 @@ export default {
           console.log(err);
         });
     },
-    seeLinkedDocs(projectId){
+    viewProj(projectId){
       this.$router.push({
-        name: "SeeLinkedDocuments",
-        params: { projectId: projectId },
-      });
+        name: "ViewProject",
+        params: {id : projectId}
+      })
     }
   },
   mounted() {

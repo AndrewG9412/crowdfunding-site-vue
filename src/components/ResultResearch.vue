@@ -22,7 +22,7 @@
           <td>
             <button
               class="btn btn-primary m-1"
-              @click="viewDocs(project.id)"
+              @click="viewProj(project.id)"
             >
               Visualizza documenti
             </button>
@@ -116,12 +116,12 @@ export default {
           console.log(err);
         });
     },
-    viewDocs(projectId) {
+    viewProj(projectId){
       this.$router.push({
-        name: "SeeLinkedDocuments",
-        params: { projectId: projectId },
-      });
-    },
+        name: "ViewProject",
+        params: {project : projectId}
+      })
+    }
   },
   mounted() {
     this.getSearchedProject();

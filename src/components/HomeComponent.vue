@@ -20,11 +20,8 @@
           <td>{{ project.descrizione }}</td>
           <td><img :src="project.immagine" alt="img" /></td>
           <td>
-            <button
-              class="btn btn-primary m-1"
-              @click="viewDocs(project.id, project.creatore_id)"
-            >
-              Visualizza documenti
+            <button class="btn btn-primary m-1" @click="viewProj(project.id)">
+              Vedi progetto
             </button>
           </td>
         </tr>
@@ -50,34 +47,6 @@ export default {
     };
   },
   methods: {
-    viewDocs(projectId, creatoreId) {
-      this.store.setTempCreatoreId(creatoreId);
-      this.$router.push({
-        name: "SeeLinkedDocuments",
-        params: { projectId: projectId },
-      });
-    },
-    linkDoc(projectId) {
-      this.store.setTempProjectId(projectId);
-      this.$router.push("/document");
-    },
-    deleteProject(id) {
-      console.log("deleting project...", id);
-      // chiamata che recupera i dati relativi ai progetti collegati all'utente
-      axios({
-        method: "delete",
-        url: "http://localhost:3002/api/projects/" + id,
-      })
-        .then((res) => {
-          if (res.status == 200) {
-            console.log(res);
-            this.store.removeElementInList(id);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     fetchProjects() {
       axios({
         method: "get",
@@ -93,6 +62,12 @@ export default {
           console.log(err);
         });
     },
+    viewProj(projectId){
+      this.$router.push({
+        name: "ViewProject",
+        params: {id : projectId}
+      })
+    }
   },
   mounted() {
     this.fetchProjects();
