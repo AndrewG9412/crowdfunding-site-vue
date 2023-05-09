@@ -78,9 +78,4 @@ export default {
 
 <style scoped>
 
-img{
-  width: 20%;
-  height: 15%;
-}
-
 </style>

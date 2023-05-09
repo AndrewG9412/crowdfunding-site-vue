@@ -18,7 +18,7 @@
           <td>{{ tipo }}</td>
           <td v-if="tipo == 'pagamento'">{{ prezzo }} €</td>
           <td v-else></td>
-          <td><button class="btn btn-primary m-2">Preferito</button></td> 
+          <td><button v-if="store.isUserAuthenticated" class="btn btn-primary m-2">Preferito</button></td> 
         </tr>
       </tbody>
     </table>
@@ -37,16 +37,18 @@
           <tr v-for="comment in allComments" :key="comment">
             <td>{{ comment.autore }}</td>
             <td>{{ comment.commento }}</td>
-            <td><button class="btn btn-primary m-2">Modifica</button></td>
-            <td><button class="btn btn-danger m-2">Cancella</button></td>
+            <td><button v-if="comment.id_autore == store.getUserId()" class="btn btn-primary m-2" @click="showEditingCommentModal()">Modifica</button></td>
+            <td><button v-if="comment.id_autore == store.getUserId()" class="btn btn-danger m-2" @click="removeComment(comment.id)">Cancella</button></td>
+            <editing-comment-modal @close="hideEditingModal" :id_commento="comment.id"></editing-comment-modal>
           </tr>
         </tbody>  
       </table>
     </div>   
     
-    <button class="btn btn-primary m2 " @click="showModal">Inserisci commento</button>
+    <button v-if="store.isUserAuthenticated" class="btn btn-primary m2 " @click="showModal">Inserisci commento</button>
 
-    <comment-modal @close="hideModal" ></comment-modal>
+    <comment-modal @close="hideModal" :id_doc="this.documentId"></comment-modal>
+    
   </div>
 </template>
 
@@ -54,9 +56,17 @@
 import axios from "axios";
 import CommentModal from "../modals/CommentModal.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.min.js";
+import { useAuthStore } from "@/store/authUser";
+import EditingCommentModal from "../modals/EditingCommentModal.vue";
 
 export default {
-  components: { CommentModal },
+  components: { CommentModal, EditingCommentModal },
+  setup() {
+    const store = useAuthStore();
+    return {
+      store,
+    };
+  },
   data() {
     return {
       docData: null,
@@ -98,6 +108,33 @@ export default {
           console.log(err);
         });
     },
+    getComments(){
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/documents/document/" + this.documentId + "/comments",
+      }).then((res) => {
+          if (res.status == 200) {
+            console.log(res.data);
+            this.allComments = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    removeComment(commentId){
+      axios({
+        method: "delete",
+        url: "http://localhost:3002/api/documents/document/comment/" + commentId + "/delete",
+      }).then((res) => {
+          if (res.status == 200) {
+            alert("Commento eliminato");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     showModal() {
       const modal = document.getElementById("comment-modal");
       document.body.appendChild(modal);
@@ -109,9 +146,23 @@ export default {
 
       this.modale = myModal;
     },
+    showEditingCommentModal(){
+      const modalEdit = document.getElementById("editing-comment-modal");
+      document.body.appendChild(modalEdit);
+      var myEditingModal = new bootstrap.Modal(modalEdit, {
+        keyboard: false,
+      });
+
+      myEditingModal.show();
+
+      this.modale = myEditingModal;
+    },
     hideModal() {
       this.modale.hide();
     },
+    hideEditingModal(){
+      this.myEditingModal.hide();
+    }
   },
   mounted() {
     this.getDocument();

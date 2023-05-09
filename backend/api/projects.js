@@ -30,10 +30,12 @@ router.route("/project/:id").get(async (req, res) => {
 //GET in base a chiave ricercata
 router.route("/project/search/:keyword").get(async (req,res) => {
   const keyword = req.params.keyword;
+  console.log(keyword);
   db.serialize(function (){
-    db.all(`SELECT * FROM project WHERE titolo LIKE "${keyword}" OR descrizione LIKE "${keyword}"`, function (err, tables){
+    db.all(`SELECT * FROM project WHERE titolo LIKE "%${keyword}%" OR descrizione LIKE "%${keyword}%"`, function (err, tables){
       if (err) throw err;
       else {
+        console.log(tables);
         res.status(200).json(tables);
       }
     });
@@ -45,7 +47,7 @@ router.route("/advsearch/:keyword/category/:cat").get(async (req,res) => {
   const keyword = req.params.keyword;
   const category = req.params.cat;
   db.serialize(function (){
-    db.all(`SELECT * FROM project WHERE categoria = "${category}" AND (titolo LIKE "${keyword}" OR descrizione LIKE "${keyword}")`, function (err, tables){
+    db.all(`SELECT * FROM project WHERE categoria = "${category}" AND (titolo LIKE "%${keyword}%" OR descrizione LIKE "%${keyword}%")`, function (err, tables){
       if (err) throw err;
       else {
         res.status(200).json(tables);
@@ -153,6 +155,26 @@ router.route("/edit/:projectId").patch(async (req, res) => {
         message: "success"
       })
     });  
+});
+
+//POST follow progetto
+router.route("/project/:id/follow").post(async (req, res) => {
+  const id = req.params.id;
+  const utente = req.body.utente;
+  var sql = "INSERT INTO follow (progetto_id, utente_id) VALUES (?,?)";
+  var params = [
+    id,
+    utente,
+  ];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.status(200).json({
+      message: "success",
+    });
+  });
 });
 
 module.exports = router;

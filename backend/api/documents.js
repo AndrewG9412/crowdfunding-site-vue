@@ -49,29 +49,35 @@ router.route("/:project_id").get(async (req, res) => {
 });
 
 //GET in base a chiave ricercata
-router.route("/document/search/:keyword").get(async (req,res) => {
+router.route("/document/search/:keyword").get(async (req, res) => {
   const keyword = req.params.keyword;
-  db.serialize(function (){
-    db.all(`SELECT * FROM document WHERE titolo LIKE "${keyword}" OR descrizione LIKE "${keyword}"`, function (err, tables){
-      if (err) throw err;
-      else {
-        res.status(200).json(tables);
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM document WHERE titolo LIKE "%${keyword}%" OR descrizione LIKE "%${keyword}%"`,
+      function (err, tables) {
+        if (err) throw err;
+        else {
+          res.status(200).json(tables);
+        }
       }
-    });
+    );
   });
 });
 
 //GET ricerca avanzata
-router.route("/advsearch/:keyword/category/:cat").get(async (req,res) => {
+router.route("/advsearch/:keyword/category/:cat").get(async (req, res) => {
   const keyword = req.params.keyword;
   const category = req.params.cat;
-  db.serialize(function (){
-    db.all(`SELECT * FROM document INNER JOIN project ON document.project_id=project.id WHERE project.categoria = "${category}" AND (document.titolo LIKE "${keyword}" OR document.descrizione LIKE "${keyword}")`, function (err, tables){
-      if (err) throw err;
-      else {
-        res.status(200).json(tables);
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM document INNER JOIN project ON document.project_id=project.id WHERE project.categoria = "${category}" AND (document.titolo LIKE "%${keyword}%" OR document.descrizione LIKE "%${keyword}%")`,
+      function (err, tables) {
+        if (err) throw err;
+        else {
+          res.status(200).json(tables);
+        }
       }
-    });
+    );
   });
 });
 
@@ -138,6 +144,19 @@ router.route("/edit/:documentId").patch(async (req, res) => {
   });
 });
 
+//DELETE documento
+router.route("/document/:id/delete",).delete(async (req, res) => {
+  const id = req.params.id;
+  db.serialize(function () {
+    db.all(`DELETE FROM document WHERE id='${id}'`, function (err, tables) {
+        if(err) res.status(400);
+        else {
+          res.status(200).json('deleted');
+        }
+    });
+  });
+});
+
 //POST acquisto documento
 router.route("/document/buydoc").post(async (req, res) => {
   const docId = req.body.docId;
@@ -155,4 +174,85 @@ router.route("/document/buydoc").post(async (req, res) => {
   });
 });
 
+//POST commento
+router.route("/document/:id/comment").post(async (req, res) => {
+  const id = req.params.id;
+  const autore = req.body.autore;
+  const commento = req.body.commento;
+  var sql = `INSERT INTO commento (id_documento, autore, commento) VALUES (?, ?, ?)`;
+  var params = [id, autore, commento];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.status(200).json({
+      message: "success",
+    });
+  });
+});
+
+//GET specifico commento
+router.route("/document/comment/:id").get(async (req, res) => {
+  const id = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM commento WHERE id_documento = "${id}"`,
+      function (err, tables) {
+        if (err) res.status(400);
+        else {
+          res.status(200).json(tables);
+        }
+      }
+    );
+  });
+});
+
+//PATCH
+router.route("document/editComment/:id").patch(async (req, res) => {
+  const documentId = req.params.documentId;
+  const autore = req.body.autore;
+  const commento = req.body.commento;
+  var sql = `UPDATE commento SET autore = ?, commento = ? WHERE id = "${documentId}"`;
+  var params = [autore, commento];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.status(200).json({
+      message: "success",
+    });
+  });
+});
+
+
+//GET commenti in base a documento
+router.route("/document/:id/comments").get(async (req, res) => {
+  const id = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM commento WHERE id_documento = "${id}"`,
+      function (err, tables) {
+        if (err) res.status(400);
+        else {
+          res.status(200).json(tables);
+        }
+      }
+    );
+  });
+});
+
+//DELETE commento in base a id
+router.route("/document/comment/:id/delete").delete(async (req, res) => {
+  const id = req.params.id;
+  db.serialize(function () {
+    db.all(`DELETE FROM commento WHERE id='${id}'`, function (err, tables) {
+        if(err) res.status(400);
+        else {
+          res.status(200).json('deleted');
+        }
+    });
+  });
+})
 module.exports = router;

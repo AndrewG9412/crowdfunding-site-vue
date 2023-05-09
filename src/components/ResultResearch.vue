@@ -2,7 +2,7 @@
   <div class="container">
     <h3>Risultati sui progetti:</h3>
 
-    <table class="table">
+    <table class="table m-5">
       <thead>
         <tr>
           <th scope="col">Creatore</th>
@@ -10,6 +10,7 @@
           <th scope="col">Categoria</th>
           <th scope="col">Descrizione</th>
           <th scope="col">Immagine</th>
+          <th scope="col">Azione</th>
         </tr>
       </thead>
       <tbody>
@@ -21,10 +22,11 @@
           <td><img :src="project.immagine" alt="img" /></td>
           <td>
             <button
+              :id="project.id"
               class="btn btn-primary m-1"
-              @click="viewProj(project.id)"
+              @click="$emit('clickProject', project.id, this)"
             >
-              Visualizza documenti
+              Visualizza progetto
             </button>
           </td>
         </tr>
@@ -43,6 +45,7 @@
         <th scope="col">Data</th>
         <th scope="col">Tipo</th>
         <th scope="col">Prezzo</th>
+        <th scope="col">Azione</th>
       </tr>
     </thead>
     <tbody>
@@ -83,7 +86,20 @@ export default {
       searchedDocuments: [],
     }
   },
+  emits: {
+    clickProject(payload, context) {
+      context.viewProject(payload);
+      return payload;
+    }
+  },
   methods: {
+    viewProject(payload) {
+      console.log("sono nella funzione di prova!");
+      this.$router.push({
+        name: "ViewProject",
+        params: {id : payload}
+      })
+    },
     getSearchedProject() {
       axios({
         method: "get",
@@ -116,12 +132,6 @@ export default {
           console.log(err);
         });
     },
-    viewProj(projectId){
-      this.$router.push({
-        name: "ViewProject",
-        params: {project : projectId}
-      })
-    }
   },
   mounted() {
     this.getSearchedProject();

@@ -28,7 +28,19 @@
         </td>
         <td>
           <button
-            v-if="store.isUserAuthenticated && checkTypeAndNotBuyed(document, this.store.getUserId())"
+            v-if="checkIfCreator()"
+            class="btn btn-danger"
+            @click="deleteDocument(document.id)"
+          >
+            Elimina documento
+          </button>
+        </td>
+        <td>
+          <button
+            v-if="
+              store.isUserAuthenticated &&
+              checkTypeAndNotBuyed(document, this.store.getUserId())
+            "
             class="btn btn-primary"
             @click="showModal"
           >
@@ -37,18 +49,24 @@
         </td>
         <td>
           <button
-            v-if="document.tipo == 'gratuito' || this.getIfBuyed(document.id ,this.store.getUserId())"
+            v-if="
+              document.tipo == 'gratuito' ||
+              this.getIfBuyed(document.id, this.store.getUserId())
+            "
             class="btn btn-primary"
             @click="viewDocument(document.id)"
           >
             Visualizza documento
           </button>
         </td>
-        <payment-modal @close="hideModal" :utente="this.store.getUserId()" :documento="document.id"></payment-modal>
+        <payment-modal
+          @close="hideModal"
+          :utente="this.store.getUserId()"
+          :documento="document.id"
+        ></payment-modal>
       </tr>
     </tbody>
   </table>
-  
 </template>
 
 <script>
@@ -114,6 +132,24 @@ export default {
         name: "EditDocument",
         params: { id: documentId },
       });
+    },
+    deleteDocument(documentId) {
+      axios({
+        method: "delete",
+        url:
+          "http://localhost:3002/api/documents/document/" +
+          documentId +
+          "/delete",
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data);
+            alert("Documento eliminato");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     viewDocument(documentId) {
       this.$router.push({

@@ -58,10 +58,11 @@
 import axios from "axios";
 
 export default {
+  props: ["id_doc"],  
   data() {
     return {
-        autore: '',
-        commento:''
+      autore: "",
+      commento: "",
     };
   },
   methods: {
@@ -72,14 +73,14 @@ export default {
       axios({
         method: "post",
         data: {
-          nome: this.donatore,
-          importo: this.donazione,
+          autore: this.autore,
+          commento: this.commento,
         },
-        url: "http://localhost:3002/api/projects/donation/" + this.progetto,
+        url: "http://localhost:3002/api/documents/document/" + this.id_doc + "/comment",
       })
         .then((res) => {
           if (res.status == 200) {
-            alert("Donazione effettuata");
+            alert("Commento effettuato");
           }
         })
         .catch((err) => {

@@ -36,8 +36,21 @@
       Dona
     </button>
 
-    <button id="follow" v-if="this.store.isUserAuthenticated" class="btn btn-primary m-1" @click="follow(store.getUserId(), this.id)">Segui</button>
+    <button
+      id="follow"
+      v-if="this.store.isUserAuthenticated"
+      class="btn btn-primary m-1"
+      @click="follow(store.getUserId(), this.id)"
+    >
+      Segui
+    </button>
     <donation-modal @close="hideModal" :progetto="this.id"></donation-modal>
+  </div>
+
+  <div class="m-2">
+    <h3>Totale donazioni : {{}}</h3>
+    <br />
+    <h3>Lista donatori :</h3>
   </div>
 </template>
 
@@ -83,7 +96,6 @@ export default {
       store,
     };
   },
-
   methods: {
     showModal() {
       const modal = document.getElementById("donation-modal");
@@ -115,6 +127,28 @@ export default {
           if (res.status == 200) {
             this.project = res.data;
             console.log(this.project);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    follow(userId) {
+      axios({
+        method: "post",
+        data: {
+          utente: userId,
+        },
+        url:
+          "http://localhost:3002/api/projects/project/" +
+          this.projectId +
+          "/follow",
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Ora segui il progetto");
+            const etichettaBottone = document.getElementById("follow");
+            etichettaBottone.innerHTML = "Non seguire più";
           }
         })
         .catch((err) => {
