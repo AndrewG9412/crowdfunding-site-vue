@@ -162,8 +162,6 @@ export default {
           if (res.status == 200) {
             alert("Ora segui il progetto");
             this.follower = true;
-            // const etichettaBottone = document.getElementById("follow");
-            // etichettaBottone.innerHTML = "Non seguire più";
           }
         })
         .catch((err) => {

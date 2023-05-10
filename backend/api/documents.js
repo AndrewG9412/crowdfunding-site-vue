@@ -197,8 +197,9 @@ router.route("/document/:id/comment").post(async (req, res) => {
   const id = req.params.id;
   const autore = req.body.autore;
   const commento = req.body.commento;
-  var sql = `INSERT INTO commento (id_documento, autore, commento) VALUES (?, ?, ?)`;
-  var params = [id, autore, commento];
+  const user = req.body.id_user;
+  var sql = `INSERT INTO commento (id_documento, autore, commento, id_autore) VALUES (?, ?, ?, ?)`;
+  var params = [id, autore, commento, user];
   db.run(sql, params, function (err, result) {
     if (err) {
       res.status(400).json({ error: err.message });
@@ -210,8 +211,8 @@ router.route("/document/:id/comment").post(async (req, res) => {
   });
 });
 
-//GET specifico commento
-router.route("/document/comment/:id").get(async (req, res) => {
+//GET commenti di un documento
+router.route("/document/comments/:id").get(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
     db.all(
@@ -226,12 +227,28 @@ router.route("/document/comment/:id").get(async (req, res) => {
   });
 });
 
-//PATCH
-router.route("document/editComment/:id").patch(async (req, res) => {
-  const documentId = req.params.documentId;
+//GET specifico commento
+router.route("/document/comment/:id").get(async (req, res) => {
+  const id = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM commento WHERE id = "${id}"`,
+      function (err, tables) {
+        if (err) res.status(400);
+        else {
+          res.status(200).json(tables);
+        }
+      }
+    );
+  });
+});
+
+//PATCH modifica commento 
+router.route("/document/editComment/:id").patch(async (req, res) => {
+  const idCommento = req.params.id;
   const autore = req.body.autore;
   const commento = req.body.commento;
-  var sql = `UPDATE commento SET autore = ?, commento = ? WHERE id = "${documentId}"`;
+  var sql = `UPDATE commento SET autore = ?, commento = ? WHERE id = "${idCommento}"`;
   var params = [autore, commento];
   db.run(sql, params, function (err, result) {
     if (err) {
@@ -273,4 +290,56 @@ router.route("/document/comment/:id/delete").delete(async (req, res) => {
     });
   });
 })
+
+//GET ifFavorite
+router.route("/document/:id/favorite/:user").get(async (req, res) => {
+  const id = req.params.id;
+  const utente = req.params.user;
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM favorite WHERE id_documento = "${id}" AND id_utente = "${utente}"`
+    ),
+      function (err, tables) {
+        if (err) res.status(400);
+        if (tables.length > 0) {
+          //res.status(200).json({ favorite: true });
+          res.status(200).json(true);
+        }
+        //res.status(200).json({ favorite: false });
+        res.status(200).json(false);
+      };
+  });
+});
+
+//POST documento preferito
+router.route("/document/:id/favorite").post(async (req, res) => {
+  const id = req.params.id;
+  const utente = req.body.utente;
+  var sql = "INSERT INTO favorite (id_documento, id_utente) VALUES (?,?)";
+  var params = [id, utente];
+  db.run(sql, params, function (err, result) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.status(200).json("favorite");
+  });
+});
+
+//DELETE (unfollow) progetto
+router.route("/document/:id/unfavorite/:user").delete(async (req, res) => {
+  const id_prog = req.params.id;
+  const id_user = req.params.user;
+  db.serialize(function () {
+    db.all(
+      `DELETE FROM favorite WHERE id_documento ='${id_prog}' AND id_utente ='${id_user}'`,
+      function (err, tables) {
+        if (err) throw err;
+        else {
+          res.status(200).json("deleted");
+        }
+      }
+    );
+  });
+});
 module.exports = router;

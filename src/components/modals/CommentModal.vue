@@ -58,7 +58,7 @@
 import axios from "axios";
 
 export default {
-  props: ["id_doc"],  
+  props: ["id_doc", "id_user"],  
   data() {
     return {
       autore: "",
@@ -75,6 +75,7 @@ export default {
         data: {
           autore: this.autore,
           commento: this.commento,
+          id_user : this.id_user,
         },
         url: "http://localhost:3002/api/documents/document/" + this.id_doc + "/comment",
       })

@@ -18,7 +18,23 @@
           <td>{{ tipo }}</td>
           <td v-if="tipo == 'pagamento'">{{ prezzo }} €</td>
           <td v-else></td>
-          <td><button v-if="store.isUserAuthenticated" class="btn btn-primary m-2">Preferito</button></td> 
+          <td>
+            <button
+              v-if="store.isUserAuthenticated && this.preferito == true"
+              class="btn btn-primary m-1"
+              @click="unfavorite()"
+            >
+              Togli da preferiti
+            </button>
+
+            <button
+              v-if="store.isUserAuthenticated && this.preferito == false"
+              class="btn btn-primary m-1"
+              @click="favorite()"
+            >
+              Aggiungi a preferiti
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -37,18 +53,46 @@
           <tr v-for="comment in allComments" :key="comment">
             <td>{{ comment.autore }}</td>
             <td>{{ comment.commento }}</td>
-            <td><button v-if="comment.id_autore == store.getUserId()" class="btn btn-primary m-2" @click="showEditingCommentModal()">Modifica</button></td>
-            <td><button v-if="comment.id_autore == store.getUserId()" class="btn btn-danger m-2" @click="removeComment(comment.id)">Cancella</button></td>
-            <editing-comment-modal @close="hideEditingModal" :id_commento="comment.id"></editing-comment-modal>
+            <td>
+              <button
+                v-if="comment.id_autore == store.getUserId()"
+                class="btn btn-primary m-2"
+                @click="showEditingCommentModal()"
+              >
+                Modifica
+              </button>
+            </td>
+            <td>
+              <button
+                v-if="comment.id_autore == store.getUserId()"
+                class="btn btn-danger m-2"
+                @click="removeComment(comment.id)"
+              >
+                Cancella
+              </button>
+            </td>
+            <editing-comment-modal
+              @close="hideEditingModal"
+              :id_commento="comment.id"
+            ></editing-comment-modal>
           </tr>
-        </tbody>  
+        </tbody>
       </table>
-    </div>   
-    
-    <button v-if="store.isUserAuthenticated" class="btn btn-primary m2 " @click="showModal">Inserisci commento</button>
+    </div>
 
-    <comment-modal @close="hideModal" :id_doc="this.documentId"></comment-modal>
-    
+    <button
+      v-if="store.isUserAuthenticated"
+      class="btn btn-primary m2"
+      @click="showModal"
+    >
+      Inserisci commento
+    </button>
+
+    <comment-modal
+      @close="hideModal"
+      :id_doc="this.documentId"
+      :id_user="this.store.getUserId()"
+    ></comment-modal>
   </div>
 </template>
 
@@ -76,6 +120,7 @@ export default {
       tipo: "",
       prezzo: "",
       allComments: [],
+      preferito : "",
     };
   },
   watch: {
@@ -108,11 +153,14 @@ export default {
           console.log(err);
         });
     },
-    getComments(){
+    getComments() {
       axios({
         method: "get",
-        url: "http://localhost:3002/api/documents/document/" + this.documentId + "/comments",
-      }).then((res) => {
+        url:
+          "http://localhost:3002/api/documents/document/comments/" +
+          this.documentId,
+      })
+        .then((res) => {
           if (res.status == 200) {
             console.log(res.data);
             this.allComments = res.data;
@@ -122,11 +170,15 @@ export default {
           console.log(err);
         });
     },
-    removeComment(commentId){
+    removeComment(commentId) {
       axios({
         method: "delete",
-        url: "http://localhost:3002/api/documents/document/comment/" + commentId + "/delete",
-      }).then((res) => {
+        url:
+          "http://localhost:3002/api/documents/document/comment/" +
+          commentId +
+          "/delete",
+      })
+        .then((res) => {
           if (res.status == 200) {
             alert("Commento eliminato");
           }
@@ -146,7 +198,7 @@ export default {
 
       this.modale = myModal;
     },
-    showEditingCommentModal(){
+    showEditingCommentModal() {
       const modalEdit = document.getElementById("editing-comment-modal");
       document.body.appendChild(modalEdit);
       var myEditingModal = new bootstrap.Modal(modalEdit, {
@@ -160,12 +212,73 @@ export default {
     hideModal() {
       this.modale.hide();
     },
-    hideEditingModal(){
-      this.myEditingModal.hide();
-    }
+    hideEditingModal() {
+      this.modale.hide();
+    },
+    checkIfFavorite(){
+      axios({
+        method: "get",
+        url:
+          "http://localhost:3002/api/documents/document/" +
+          this.documentId +
+          "/favorite/" +
+          this.store.getUserId(),
+      })
+        .then((res) => {
+          // if (res.data.favorite == true) this.preferito = true;
+          if (res.data == true) this.preferito = true;
+          // if (res.data.favorite == false) this.preferito = false;
+          if (res.data == false) this.preferito = false;
+          alert(this.preferito);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    favorite() {
+      axios({
+        method: "post",
+        data: {
+          utente: this.store.getUserId(),
+        },
+        url:
+          "http://localhost:3002/api/documents/document/" +
+          this.documentId +
+          "/favorite",
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Impostato come preferito");
+            this.preferito = true;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    unfavorite() {
+      axios({
+        method: "delete",
+        url:
+          "http://localhost:3002/api/documents/document/" +
+          this.documentId +
+          "/unfavorite/" + this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Eliminato dai preferiti");
+            this.preferito = false;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   mounted() {
     this.getDocument();
+    this.getComments();
+    this.checkIfFavorite();
   },
 };
 </script>

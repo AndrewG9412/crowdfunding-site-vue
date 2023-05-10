@@ -80,7 +80,7 @@ export default {
       axios({
         method: "get",
         url:
-          "http://localhost:3002/api/documents/document/comment" +
+          "http://localhost:3002/api/documents/document/comment/" +
           this.id_commento,
       })
         .then((res) => {
@@ -113,5 +113,8 @@ export default {
         });
     },
   },
+  mounted(){
+    this.getOldComment();
+  }
 };
 </script>
