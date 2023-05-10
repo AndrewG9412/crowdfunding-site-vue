@@ -38,9 +38,17 @@
 
     <button
       id="follow"
-      v-if="this.store.isUserAuthenticated"
+      v-if="store.isUserAuthenticated && this.follower == true"
       class="btn btn-primary m-1"
-      @click="follow(store.getUserId(), this.id)"
+      @click="unfollow(store.getUserId(), this.projectId)"
+    >
+      Non seguire più
+    </button>
+
+    <button
+      v-if="store.isUserAuthenticated && this.follower == false"
+      class="btn btn-primary m-1"
+      @click="follow()"
     >
       Segui
     </button>
@@ -48,9 +56,12 @@
   </div>
 
   <div class="m-2">
-    <h3>Totale donazioni : {{}}</h3>
+    <h3>Totale donazioni : {{ totale_donazioni }} €</h3>
     <br />
     <h3>Lista donatori :</h3>
+    <ul v-for="donatore in lista_donatori" :key="donatore">
+      <li>{{ donatore }}</li>
+    </ul>
   </div>
 </template>
 
@@ -88,6 +99,9 @@ export default {
       immagine: "",
       id: "",
       creatore_id: "",
+      follower: "",
+      totale_donazioni: "",
+      lista_donatori: [],
     };
   },
   setup() {
@@ -133,11 +147,11 @@ export default {
           console.log(err);
         });
     },
-    follow(userId) {
+    follow() {
       axios({
         method: "post",
         data: {
-          utente: userId,
+          utente: this.store.getUserId(),
         },
         url:
           "http://localhost:3002/api/projects/project/" +
@@ -147,8 +161,62 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             alert("Ora segui il progetto");
-            const etichettaBottone = document.getElementById("follow");
-            etichettaBottone.innerHTML = "Non seguire più";
+            this.follower = true;
+            // const etichettaBottone = document.getElementById("follow");
+            // etichettaBottone.innerHTML = "Non seguire più";
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    unfollow() {
+      axios({
+        method: "delete",
+        url:
+          "http://localhost:3002/api/projects/project/" +
+          this.projectId +
+          "/unfollow/" + this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Non segui più il progetto");
+            this.follower = false;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    checkIfFollower() {
+      axios({
+        method: "get",
+        url:
+          "http://localhost:3002/api/projects/project/" +
+          this.projectId +
+          "/follow/" +
+          this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.data.follow == true) this.follower = true;
+          if (res.data.follow == false) this.follower = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getDatiDonazioni() {
+      axios({
+        method: "get",
+        url:
+          "http://localhost:3002/api/projects/project/" +
+          this.projectId +
+          "/donation",
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            this.totale_donazioni = res.data.importo;
+            this.lista_donatori = res.data.donatori;
           }
         })
         .catch((err) => {
@@ -158,6 +226,8 @@ export default {
   },
   mounted() {
     this.downloadProject();
+    this.getDatiDonazioni();
+    this.checkIfFollower();
   },
 };
 </script>

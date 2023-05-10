@@ -12,8 +12,6 @@
     <button class="btn btn-primary m-2" type="submit" @click="search">Ricerca</button>
   </div>
 
-  
-
   <div class="container">
     <h3>Risultati sui progetti:</h3>
     <table class="table m-5">
@@ -36,8 +34,9 @@
           <td><img :src="project.immagine" alt="img" /></td>
           <td>
             <button
+              :id="project.id"
               class="btn btn-primary m-1"
-              @click="viewProj(project.id)"
+              @click="$emit('clickProject', project.id, this)"
             >
               Visualizza documenti
             </button>
@@ -71,9 +70,10 @@
         <td v-else></td>
         <td>
           <button
+            :id="document.id"
             v-if="document.tipo == 'gratuito' || this.getIfBuyed(document.id ,this.store.getUserId())"
             class="btn btn-primary"
-            @click="viewDocument(document.id)"
+            @click="$emit('clickDocument', document.id, this)"
           >
             Visualizza documento
           </button>
@@ -96,23 +96,62 @@ export default {
   data() {
     return {
       chiaveRicerca: "",
-      selectedCategory: "",
+      selectedCategory: "tutte le categorie",
       choosen: "progetti",
-      categories: ["arte", "letteratura", "informatica", "giochi", "cibo"],
+      categories: ["tutte le categorie", "arte", "letteratura", "informatica", "giochi", "cibo"],
       projectSearched: [],
       documentSearched: [],
     };
   },
+  emits: {
+    clickProject(payload, context) {
+      context.viewProject(payload);
+      return payload;
+    },
+    clickDocument(payload, context) {
+      context.viewDocument(payload);
+      return payload;
+    },
+  },
   methods: {
+    viewProject(payload) {
+      this.$router.push({
+        name: "ViewProject",
+        params: {id : payload}
+      })
+    },
+    viewDocument(payload){
+      this.$router.push({
+        name: "ViewDocument",
+        params: {id : payload}
+      })
+    },
     search(e) {
       console.log(this.chiaveRicerca);
       console.log(this.selectedCategory);
       console.log(this.choosen);
+      this.projectSearched = [];
+      this.documentSearched = [];  
       e.preventDefault();
-      if (this.choosen == "progetti" || this.selectedCategory != "") {
-      axios({
+      
+      if (this.choosen == "progetti" && this.selectedCategory != "tutte le categorie") {
+        axios({
+          method : "get",
+          url : "http://localhost:3002/api/projects/advsearch/" + this.chiaveRicerca + "/category/" + this.selectedCategory,
+        }).then((res) => {
+            if (res.status == 200) {
+              console.log(res);
+              this.projectSearched = res.data;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      if (this.choosen == "progetti" && this.selectedCategory == "tutte le categorie"){
+        axios({
         method : "get",
-        url : "http://localhost:3002/api/projects/advsearch/" + this.chiaveRicerca + "/category/" + this.selectedCategory,
+        url : "http://localhost:3002/api/projects/advsearch/" + this.chiaveRicerca + "/withoutCat",
       }).then((res) => {
           if (res.status == 200) {
             console.log(res);
@@ -122,21 +161,36 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-    }
-    if (this.choosen == "documenti" || this.selectedCategory != "") {
-      axios({
-        method : "get",
-        url : "http://localhost:3002/api/documents/advsearch/" + this.chiaveRicerca + "/category/" + this.selectedCategory,
-      }).then((res) => {
-          if (res.status == 200) {
-            console.log(res);
-            this.documentSearched = res.data;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+      }
+      if (this.choosen == "documenti" && this.selectedCategory != "tutte le categorie") {
+        axios({
+          method : "get",
+          url : "http://localhost:3002/api/documents/advsearch/" + this.chiaveRicerca + "/category/" + this.selectedCategory,
+        }).then((res) => {
+            if (res.status == 200) {
+              console.log(res);
+              this.documentSearched = res.data;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      if (this.choosen == "documenti" && this.selectedCategory == "tutte le categorie") {
+        axios({
+          method : "get",
+          url : "http://localhost:3002/api/documents/advsearch/" + this.chiaveRicerca + "/withoutCat",
+        }).then((res) => {
+            if (res.status == 200) {
+              console.log(res);
+              this.documentSearched = res.data;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    
     },
   },
 };

@@ -58,9 +58,10 @@
         <td v-else></td>
         <td>
           <button
+            :id="document.id"
             v-if="document.tipo == 'gratuito' || this.getIfBuyed(document.id ,this.store.getUserId())"
-            class="btn btn-primary"
-            @click="viewDocument(document.id)"
+            class="btn btn-primary m-1"
+            @click="$emit('clickDocument', document.id, this)"
           >
             Visualizza documento
           </button>
@@ -90,13 +91,22 @@ export default {
     clickProject(payload, context) {
       context.viewProject(payload);
       return payload;
-    }
+    },
+    clickDocument(payload, context) {
+      context.viewDocument(payload);
+      return payload;
+    },
   },
   methods: {
     viewProject(payload) {
-      console.log("sono nella funzione di prova!");
       this.$router.push({
         name: "ViewProject",
+        params: {id : payload}
+      })
+    },
+    viewDocument(payload){
+      this.$router.push({
+        name: "ViewDocument",
         params: {id : payload}
       })
     },
@@ -137,5 +147,5 @@ export default {
     this.getSearchedProject();
     this.getSearchedDocument();
   },
-};
+}
 </script>

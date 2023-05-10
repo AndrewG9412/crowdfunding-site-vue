@@ -84,6 +84,7 @@ export default {
         }).then((res) => {
             if (res.status == 200) {
                 alert("Donazione effettuata");
+                close();
             }    
         }).catch((err) => {
             console.log(err);    

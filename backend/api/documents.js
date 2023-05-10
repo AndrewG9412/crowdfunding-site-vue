@@ -51,6 +51,7 @@ router.route("/:project_id").get(async (req, res) => {
 //GET in base a chiave ricercata
 router.route("/document/search/:keyword").get(async (req, res) => {
   const keyword = req.params.keyword;
+  console.log(keyword);
   db.serialize(function () {
     db.all(
       `SELECT * FROM document WHERE titolo LIKE "%${keyword}%" OR descrizione LIKE "%${keyword}%"`,
@@ -64,13 +65,13 @@ router.route("/document/search/:keyword").get(async (req, res) => {
   });
 });
 
-//GET ricerca avanzata
+//GET ricerca avanzata con categoria
 router.route("/advsearch/:keyword/category/:cat").get(async (req, res) => {
   const keyword = req.params.keyword;
   const category = req.params.cat;
   db.serialize(function () {
     db.all(
-      `SELECT * FROM document INNER JOIN project ON document.project_id=project.id WHERE project.categoria = "${category}" AND (document.titolo LIKE "%${keyword}%" OR document.descrizione LIKE "%${keyword}%")`,
+      `SELECT document.id, document.titolo, document.descrizione, document.data, document.tipo, document.prezzo FROM document LEFT JOIN project ON document.project_id=project.id WHERE project.categoria = "${category}" AND (document.titolo LIKE "%${keyword}%" OR document.descrizione LIKE "%${keyword}%")`,
       function (err, tables) {
         if (err) throw err;
         else {
@@ -80,6 +81,23 @@ router.route("/advsearch/:keyword/category/:cat").get(async (req, res) => {
     );
   });
 });
+
+//GET ricerca avanzata senza categoria
+router.route("/advsearch/:keyword/withoutCat").get(async (req, res) => {
+  const keyword = req.params.keyword;
+  db.serialize(function () {
+    db.all(
+      `SELECT * FROM document WHERE titolo LIKE "%${keyword}%" OR descrizione LIKE "%${keyword}%"`,
+      function (err, tables) {
+        if (err) throw err;
+        else {
+          res.status(200).json(tables);
+        }
+      }
+    );
+  });
+});
+
 
 //GET di documento acquistato da userId
 router.route("/document/:id/userId/:user").get(async (req, res) => {
