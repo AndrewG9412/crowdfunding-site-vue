@@ -86,6 +86,7 @@ export default {
       this.categoria = this.project[0].categoria;
       this.descrizione = this.project[0].descrizione;
       this.immagine = this.project[0].immagine;
+      this.creatore_id = this.project[0].creatore_id;
     },
   },
   components: { DonationModal },
@@ -126,7 +127,9 @@ export default {
       this.modale.hide();
     },
     viewDocs(projectId, creatoreId) {
+      console.log(`creatore : "${creatoreId}"`);
       this.store.setTempCreatoreId(creatoreId);
+      console.log(this.store.getTempCreatoreId());
       this.$router.push({
         name: "SeeLinkedDocuments",
         params: { projectId: this.projectId },

@@ -39,7 +39,9 @@
           <button
             v-if="
               store.isUserAuthenticated &&
-              checkTypeAndNotBuyed(document, this.store.getUserId())
+              this.store.getUserId() != this.store.getTempCreatoreId() &&
+              document.tipo == 'pagamento' &&
+              !getIfBuyed(document, this.store.getUserId())
             "
             class="btn btn-primary"
             @click="showModal"
@@ -51,7 +53,9 @@
           <button
             v-if="
               document.tipo == 'gratuito' ||
-              this.getIfBuyed(document.id, this.store.getUserId())
+              (document.tipo == 'pagamento' &&
+                getIfBuyed(document, this.store.getUserId())) ||
+              this.store.getUserId() == this.store.getTempCreatoreId()
             "
             class="btn btn-primary"
             @click="viewDocument(document.id)"
@@ -79,7 +83,6 @@ export default {
   components: { PaymentModal },
   data() {
     return {
-      buyed: null,
       allLinkedDocuments: [],
     };
   },
@@ -122,7 +125,7 @@ export default {
     },
     checkIfCreator() {
       console.log(
-        `userId: "${this.store.getUserId()}  creatoreId : "${this.store.getTempCreatoreId()}"`
+        `userId: "${this.store.getUserId()}"  creatoreId : "${this.store.getTempCreatoreId()}"`
       );
       if (this.store.getUserId() == this.store.getTempCreatoreId()) return true;
       else return false;
@@ -158,27 +161,52 @@ export default {
       });
     },
     checkTypeAndNotBuyed(doc, userId) {
-      //se doc a pagamento e non acquistato da userId restituire true
+      //se doc a pagamento e non acquistato da userId restituire true (quindi mostra tasto acquista)
       //se doc gratis restituire false
       //se già acquistato restituire false
-      const buyed = this.getIfBuyed(doc.id, userId);
-      if (doc.tipo == "pagamento" && !buyed) return true;
-      if (doc.tipo == "gratuito") return false;
-      if (buyed) return false;
-    },
-    getIfBuyed(docId, userId) {
+      let buyed = "";
       axios({
         method: "get",
         url:
           "http://localhost:3002/api/documents/document/" +
-          docId +
+          doc.id +
           "/userId/" +
           userId,
       })
         .then((res) => {
           if (res.status == 200) {
-            if (res.data.risultato == true) return (this.buyed = true);
-            else return (this.buyed = false);
+            if (res.data.risultato == true) {
+              buyed = true;
+              console.log(`buyed : ${buyed}`);
+            } else {
+              buyed = false;
+              console.log(`buyed : ${buyed}`);
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      //let buyed = this.getIfBuyed(doc.id, userId);
+      console.log(`buyed : ${buyed}`);
+      if (doc.tipo == "pagamento" && !buyed) return true;
+      if (doc.tipo == "gratuito") return false;
+      if (buyed) return false;
+    },
+    getIfBuyed(document, userId) {
+      axios({
+        method: "get",
+        url:
+          "http://localhost:3002/api/documents/document/" +
+          document.id +
+          "/userId/" +
+          userId,
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data.risultato);
+            if (res.data.risultato == true) return true;
+            else return false;
           }
         })
         .catch((err) => {

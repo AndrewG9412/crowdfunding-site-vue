@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require("../db.js");
 const bcrypt = require("bcryptjs");
 const passport = require("../passportConfig.js");
-//const User = require("../sequelize");
 
 // Get
 router.route("/").get(async (req, res) => {

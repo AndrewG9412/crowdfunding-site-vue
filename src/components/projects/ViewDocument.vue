@@ -120,7 +120,7 @@ export default {
       tipo: "",
       prezzo: "",
       allComments: [],
-      preferito : "",
+      preferito: "",
     };
   },
   watch: {
@@ -215,7 +215,7 @@ export default {
     hideEditingModal() {
       this.modale.hide();
     },
-    checkIfFavorite(){
+    checkIfFavorite() {
       axios({
         method: "get",
         url:
@@ -225,11 +225,8 @@ export default {
           this.store.getUserId(),
       })
         .then((res) => {
-          // if (res.data.favorite == true) this.preferito = true;
-          if (res.data == true) this.preferito = true;
-          // if (res.data.favorite == false) this.preferito = false;
-          if (res.data == false) this.preferito = false;
-          alert(this.preferito);
+          if (res.data.favorite == true) this.preferito = true;
+          if (res.data.favorite == false) this.preferito = false;
         })
         .catch((err) => {
           console.log(err);
@@ -262,7 +259,8 @@ export default {
         url:
           "http://localhost:3002/api/documents/document/" +
           this.documentId +
-          "/unfavorite/" + this.store.getUserId(),
+          "/unfavorite/" +
+          this.store.getUserId(),
       })
         .then((res) => {
           if (res.status == 200) {

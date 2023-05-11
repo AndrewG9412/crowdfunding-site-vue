@@ -40,7 +40,6 @@ router.route("/:project_id").get(async (req, res) => {
       function (err, tables) {
         if (err) throw err;
         else {
-          console.log(tables);
           res.status(200).json(tables);
         }
       }
@@ -298,16 +297,16 @@ router.route("/document/:id/favorite/:user").get(async (req, res) => {
   db.serialize(function () {
     db.all(
       `SELECT * FROM favorite WHERE id_documento = "${id}" AND id_utente = "${utente}"`
-    ),
+    ,
       function (err, tables) {
+        console.log(tables);
         if (err) res.status(400);
         if (tables.length > 0) {
-          //res.status(200).json({ favorite: true });
-          res.status(200).json(true);
+          res.status(200).json({ favorite: true });
+          
         }
-        //res.status(200).json({ favorite: false });
-        res.status(200).json(false);
-      };
+        res.status(200).json({ favorite: false });
+      });
   });
 });
 
@@ -342,4 +341,34 @@ router.route("/document/:id/unfavorite/:user").delete(async (req, res) => {
     );
   });
 });
+
+//GET documenti preferiti da utente
+router.route("/favorites/:id").get(async (req, res) => {
+  const user = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN favorite ON document.id=favorite.id_documento WHERE favorite.id_utente = "${user}"`
+    ),
+      function (err, tables) {
+        if (err) res.status(400);
+        res.status(200).json(tables);
+      };
+  });
+});
+
+//GET documenti acquistati da utente
+router.route("/buyed/:id").get(async (req, res) => {
+  const user = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN possesso ON document.id=possesso.id_documento WHERE possesso.id_utente = "${user}"`
+    ),
+      function (err, tables) {
+        if (err) res.status(400);
+        res.status(200).json(tables);
+      };
+  });
+});
+
+
 module.exports = router;

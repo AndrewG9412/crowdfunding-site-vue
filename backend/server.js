@@ -11,7 +11,7 @@ var SQLiteStore = require("connect-sqlite3")(session);
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 //const db = require("./db.js");
-//import User from "./sequelize";
+
 
 const server = express();
 const host = "localhost";

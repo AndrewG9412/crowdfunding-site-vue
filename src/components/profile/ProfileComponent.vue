@@ -11,14 +11,13 @@
     <h4>Tipo di utente : {{ type }}</h4>
   </div>
 
-  <div class="container" v-if="store.isUserAuthenticated">
-    <h3 class="listaProg">Lista dei tuoi progetti :</h3>
+  <div
+    class="container"
+    v-if="store.isUserAuthenticated && store.getTypeOfUser() == 'creatore'"
+  >
+    <h3 class="listaProg">Lista dei tuoi progetti creati :</h3>
     <ol>
-      <li
-        class="m-2 p-2"
-        v-for="project in this.allProjects"
-        :key="project"
-      >
+      <li class="m-2 p-2" v-for="project in this.allProjects" :key="project">
         <span class="titolo p-2">{{ project.titolo }} </span>
         <span>{{ project.descrizione }}</span>
         <img :src="project.immagine" alt="img" />
@@ -31,12 +30,67 @@
         <button class="btn btn-primary m-1" @click="linkDoc(project.id)">
           Associa documento
         </button>
-        <button class="btn btn-primary m-1" @click="viewDocs(project.id, project.creatore_id)">
+        <button
+          class="btn btn-primary m-1"
+          @click="viewDocs(project.id, project.creatore_id)"
+        >
           Visualizza documenti
         </button>
       </li>
     </ol>
   </div>
+
+  <div class="container">
+    <h3>Progetti seguiti :</h3>
+    <ol>
+      <li
+        class="m-2 p-2"
+        v-for="project in this.followedProjects"
+        :key="project"
+        >
+        <span class="titolo p-2">{{ project.titolo }} </span>
+        <span>{{ project.descrizione }}</span>
+        <button class="btn btn-primary m-1" @click="seeProject(project.id)">
+          Vedi documento
+        </button>
+      </li>
+    </ol>
+  </div>
+
+  <div class="container">
+    <h3>Documenti preferiti :</h3>
+    <ol>
+      <li
+        class="m-2 p-2"
+        v-for="document in this.favoriteDocuments"
+        :key="document"
+        >
+        <span class="titolo p-2">{{ document.titolo }} </span>
+        <span>{{ document.descrizione }}</span>
+        <button class="btn btn-primary m-1" @click="seeFavoriteDoc(document.id)">
+          Vedi progetto
+        </button>
+      </li>
+    </ol>
+  </div>
+
+  <div class="container">
+    <h3>Documenti acquistati :</h3>
+    <ol>
+      <li
+        class="m-2 p-2"
+        v-for="document in this.buyedDocuments"
+        :key="document"
+        >
+        <span class="titolo p-2">{{ document.titolo }} </span>
+        <span>{{ document.descrizione }}</span>
+        <button class="btn btn-primary m-1" @click="seeBuyedDoc(document.id)">
+          Vedi documento
+        </button>
+      </li>
+    </ol>
+  </div>
+
 </template>
 
 <script>
@@ -53,13 +107,16 @@ export default {
   data() {
     return {
       allProjects: [],
+      followedProjects: [],
+      favoriteDocuments: [],
+      buyedDocuments: [],
     };
   },
   methods: {
     fetchProjects() {
       axios({
         method: "get",
-        url: "http://localhost:3002/api/projects/id/" +  this.store.getUserId(),
+        url: "http://localhost:3002/api/projects/id/" + this.store.getUserId(),
       })
         .then((res) => {
           if (res.status == 200) {
@@ -105,6 +162,69 @@ export default {
           console.log(err);
         });
     },
+    getFollowedProjects(){
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/projects/followed/" + this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res);
+            this.followedProjects = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getFavoriteDocuments(){
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/documents/favorites/" + this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res);
+            this.favoriteDocuments = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getBuyedDocuments(){
+      axios({
+        method: "get",
+        url: "http://localhost:3002/api/documents/buyed/" + this.store.getUserId(),
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res);
+            this.buyedDocuments = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    seeProject(projectId){
+      this.$router.push({
+        name: "ViewProject",
+        params: {id : projectId}
+      })
+    },
+    seeFavoriteDoc(docId){
+      this.$router.push({
+        name: "ViewDocument",
+        params: {id : docId}
+      })
+    },
+    seeBuyedDoc(docId){
+      this.$router.push({
+        name: "ViewDocument",
+        params: {id : docId}
+      })
+    },
   },
   computed: {
     nome() {
@@ -122,6 +242,9 @@ export default {
   },
   mounted() {
     this.fetchProjects();
+    this.getFollowedProjects();
+    this.getFavoriteDocuments();
+    this.getBuyedDocuments();
   },
 };
 </script>

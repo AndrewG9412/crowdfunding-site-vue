@@ -37,7 +37,6 @@ router.route("/project/search/:keyword").get(async (req, res) => {
       function (err, tables) {
         if (err) throw err;
         else {
-          console.log(tables);
           res.status(200).json(tables);
         }
       }
@@ -110,7 +109,6 @@ router.route("/:id").delete(async (req, res) => {
 //GET progetti in base alla categoria
 router.route("/:category").get(async (req, res) => {
   const category = req.params.category;
-  console.log(category);
   db.serialize(function () {
     db.all(
       `SELECT * FROM project WHERE categoria = '${category}'`,
@@ -269,6 +267,20 @@ router.route("/project/:id/unfollow/:user").delete(async (req, res) => {
         }
       }
     );
+  });
+});
+
+//GET progetti seguiti da utente
+router.route("/followed/:id").get(async (req, res) => {
+  const user = req.params.id;
+  db.serialize(function () {
+    db.all(
+      `SELECT project.titolo, project.descrizione, project.id FROM project LEFT JOIN follow ON project.id=follow.progetto_id WHERE follow.utente_id = "${user}"`
+    ),
+      function (err, tables) {
+        if (err) res.status(400);
+        res.status(200).json(tables);
+      };
   });
 });
 
