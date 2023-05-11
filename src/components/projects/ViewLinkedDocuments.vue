@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="document in allLinkedDocuments" :key="document">
+      <tr v-for="document, index in allLinkedDocuments" :key="document">
         <th scope="row">{{ document.titolo }}</th>
         <td>{{ document.descrizione }}</td>
         <td>{{ document.data }}</td>
@@ -40,8 +40,7 @@
             v-if="
               store.isUserAuthenticated &&
               this.store.getUserId() != this.store.getTempCreatoreId() &&
-              document.tipo == 'pagamento' &&
-              !getIfBuyed(document, this.store.getUserId())
+              document.tipo == 'pagamento' && ifBuyedDocuments[index] == false
             "
             class="btn btn-primary"
             @click="showModal"
@@ -54,7 +53,7 @@
             v-if="
               document.tipo == 'gratuito' ||
               (document.tipo == 'pagamento' &&
-                getIfBuyed(document, this.store.getUserId())) ||
+              ifBuyedDocuments[index] == true ) ||
               this.store.getUserId() == this.store.getTempCreatoreId()
             "
             class="btn btn-primary"
@@ -84,6 +83,7 @@ export default {
   data() {
     return {
       allLinkedDocuments: [],
+      ifBuyedDocuments: [],
     };
   },
   setup() {
@@ -104,6 +104,7 @@ export default {
       return this.$route.params.creatoreId;
     },
   },
+
   methods: {
     hideModal() {
       this.modale.hide();
@@ -117,6 +118,9 @@ export default {
           if (res.status == 200) {
             console.log(res.data);
             this.allLinkedDocuments = res.data;
+            for (const document of this.allLinkedDocuments) {
+              this.getIfBuyed(document, this.store.getUserId());
+            }
           }
         })
         .catch((err) => {
@@ -205,8 +209,8 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             console.log(res.data.risultato);
-            if (res.data.risultato == true) return true;
-            else return false;
+            if (res.data.risultato == true) this.ifBuyedDocuments.push(true);
+            else this.ifBuyedDocuments.push(false);
           }
         })
         .catch((err) => {
