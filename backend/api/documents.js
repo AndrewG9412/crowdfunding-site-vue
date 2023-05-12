@@ -97,7 +97,6 @@ router.route("/advsearch/:keyword/withoutCat").get(async (req, res) => {
   });
 });
 
-
 //GET di documento acquistato da userId
 router.route("/document/:id/userId/:user").get(async (req, res) => {
   const documentId = req.params.id;
@@ -162,14 +161,14 @@ router.route("/edit/:documentId").patch(async (req, res) => {
 });
 
 //DELETE documento
-router.route("/document/:id/delete",).delete(async (req, res) => {
+router.route("/document/:id/delete").delete(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
     db.all(`DELETE FROM document WHERE id='${id}'`, function (err, tables) {
-        if(err) res.status(400);
-        else {
-          res.status(200).json('deleted');
-        }
+      if (err) res.status(400);
+      else {
+        res.status(200).json("deleted");
+      }
     });
   });
 });
@@ -230,19 +229,16 @@ router.route("/document/comments/:id").get(async (req, res) => {
 router.route("/document/comment/:id").get(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
-    db.all(
-      `SELECT * FROM commento WHERE id = "${id}"`,
-      function (err, tables) {
-        if (err) res.status(400);
-        else {
-          res.status(200).json(tables);
-        }
+    db.all(`SELECT * FROM commento WHERE id = "${id}"`, function (err, tables) {
+      if (err) res.status(400);
+      else {
+        res.status(200).json(tables);
       }
-    );
+    });
   });
 });
 
-//PATCH modifica commento 
+//PATCH modifica commento
 router.route("/document/editComment/:id").patch(async (req, res) => {
   const idCommento = req.params.id;
   const autore = req.body.autore;
@@ -259,7 +255,6 @@ router.route("/document/editComment/:id").patch(async (req, res) => {
     });
   });
 });
-
 
 //GET commenti in base a documento
 router.route("/document/:id/comments").get(async (req, res) => {
@@ -282,13 +277,13 @@ router.route("/document/comment/:id/delete").delete(async (req, res) => {
   const id = req.params.id;
   db.serialize(function () {
     db.all(`DELETE FROM commento WHERE id='${id}'`, function (err, tables) {
-        if(err) res.status(400);
-        else {
-          res.status(200).json('deleted');
-        }
+      if (err) res.status(400);
+      else {
+        res.status(200).json("deleted");
+      }
     });
   });
-})
+});
 
 //GET ifFavorite
 router.route("/document/:id/favorite/:user").get(async (req, res) => {
@@ -296,17 +291,16 @@ router.route("/document/:id/favorite/:user").get(async (req, res) => {
   const utente = req.params.user;
   db.serialize(function () {
     db.all(
-      `SELECT * FROM favorite WHERE id_documento = "${id}" AND id_utente = "${utente}"`
-    ,
+      `SELECT * FROM favorite WHERE id_documento = "${id}" AND id_utente = "${utente}"`,
       function (err, tables) {
         console.log(tables);
         if (err) res.status(400);
         if (tables.length > 0) {
           res.status(200).json({ favorite: true });
-          
         }
-        res.status(200).json({ favorite: false });
-      });
+        else res.status(200).json({ favorite: false});
+      }
+    );
   });
 });
 
@@ -347,12 +341,12 @@ router.route("/favorites/:id").get(async (req, res) => {
   const user = req.params.id;
   db.serialize(function () {
     db.all(
-      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN favorite ON document.id=favorite.id_documento WHERE favorite.id_utente = "${user}"`
-    ),
+      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN favorite ON document.id=favorite.id_documento WHERE favorite.id_utente = "${user}"`,
       function (err, tables) {
         if (err) res.status(400);
         res.status(200).json(tables);
-      };
+      }
+    );
   });
 });
 
@@ -361,14 +355,13 @@ router.route("/buyed/:id").get(async (req, res) => {
   const user = req.params.id;
   db.serialize(function () {
     db.all(
-      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN possesso ON document.id=possesso.id_documento WHERE possesso.id_utente = "${user}"`
-    ),
+      `SELECT document.titolo, document.descrizione, document.id FROM document LEFT JOIN possesso ON document.id=possesso.id_documento WHERE possesso.id_utente = "${user}"`,
       function (err, tables) {
         if (err) res.status(400);
         res.status(200).json(tables);
-      };
+      }
+    );
   });
 });
-
 
 module.exports = router;

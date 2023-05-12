@@ -41,24 +41,24 @@
   </div>
 
   <div class="container">
-    <h3>Progetti seguiti :</h3>
+    <h3 style="color : red">Progetti seguiti :</h3>
     <ol>
       <li
         class="m-2 p-2"
-        v-for="project in this.followedProjects"
+        v-for="project of this.followedProjects"
         :key="project"
         >
         <span class="titolo p-2">{{ project.titolo }} </span>
         <span>{{ project.descrizione }}</span>
         <button class="btn btn-primary m-1" @click="seeProject(project.id)">
-          Vedi documento
+          Vedi progetto
         </button>
       </li>
     </ol>
   </div>
 
   <div class="container">
-    <h3>Documenti preferiti :</h3>
+    <h3 style="color : red">Documenti preferiti :</h3>
     <ol>
       <li
         class="m-2 p-2"
@@ -68,14 +68,14 @@
         <span class="titolo p-2">{{ document.titolo }} </span>
         <span>{{ document.descrizione }}</span>
         <button class="btn btn-primary m-1" @click="seeFavoriteDoc(document.id)">
-          Vedi progetto
+          Vedi documento
         </button>
       </li>
     </ol>
   </div>
 
   <div class="container">
-    <h3>Documenti acquistati :</h3>
+    <h3 style="color : red">Documenti acquistati :</h3>
     <ol>
       <li
         class="m-2 p-2"

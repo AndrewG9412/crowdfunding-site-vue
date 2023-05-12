@@ -275,12 +275,12 @@ router.route("/followed/:id").get(async (req, res) => {
   const user = req.params.id;
   db.serialize(function () {
     db.all(
-      `SELECT project.titolo, project.descrizione, project.id FROM project LEFT JOIN follow ON project.id=follow.progetto_id WHERE follow.utente_id = "${user}"`
-    ),
+      `SELECT project.titolo, project.descrizione, project.id FROM project LEFT JOIN follow ON project.id=follow.progetto_id WHERE follow.utente_id = "${user}"`,
       function (err, tables) {
         if (err) res.status(400);
         res.status(200).json(tables);
-      };
+      }
+    );
   });
 });
 
