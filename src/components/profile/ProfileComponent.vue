@@ -155,7 +155,9 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             console.log(res);
+            alert("Progetto eliminato");
             this.store.removeElementInList(id);
+            this.$router.push({name: "Profile"});
           }
         })
         .catch((err) => {
